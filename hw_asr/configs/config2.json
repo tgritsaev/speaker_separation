@@ -1,0 +1,189 @@
+{
+  "name": "default_config",
+  "n_gpu": 1,
+  "text_encoder": {
+    "type": "CTCCharTextEncoder",
+    "args": {
+        "kenlm_model_path": "/home/mkairov/biology_research/dla_hw1/hw_asr/text_encoder/lower_3-gram.arpa",
+        "unigrams_path": "/home/mkairov/biology_research/dla_hw1/hw_asr/text_encoder/librispeech-fixed-vocab.txt"
+    }
+  },
+  "preprocessing": {
+    "sr": 16000,
+    "spectrogram": {
+      "type": "MelSpectrogram",
+      "args": {
+        "n_mels": 256
+      }
+    },
+    "log_spec": true
+  },
+  "augmentations": {
+    "random_apply_p": 0.6,
+    "wave": [
+        {"type": "AddColoredNoise", "args": {"p": 1, "sample_rate": 16000}},
+        {"type": "Gain", "args": {"p": 0.8, "sample_rate": 16000}},
+        {"type": "HighPassFilter", "args": {"p": 0, "sample_rate": 16000}},
+        {"type": "LowPassFilter", "args": {"p": 0, "sample_rate": 16000}},
+        {"type": "PitchShift", "args": {"p": 0.8, "min_transpose_semitones": -2, "max_transpose_semitones": 2, "sample_rate": 16000}},
+        {"type": "PolarityInversion", "args": {"p": 0.8, "sample_rate": 16000}},
+        {"type": "Shift", "args": {"p": 0.8, "sample_rate": 16000}}
+    ],
+    "spectrogram": [
+        {"type": "TimeMasking", "args": {"time_mask_param": 80, "p": 0.05}},
+        {"type": "TimeMasking", "args": {"time_mask_param": 80, "p": 0.05}},
+        {"type": "TimeMasking", "args": {"time_mask_param": 80, "p": 0.05}},
+        {"type": "FrequencyMasking", "args": {"freq_mask_param": 80}}
+    ]
+  },
+  "arch": {
+    "type": "DeepSpeech2Model",
+    "args": {
+      "n_feats": 256,
+      "n_rnn_layers": 6,
+      "rnn_hidden_size": 512,
+      "rnn_dropout": 0.2
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 128,
+      "num_workers": 4,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "train-clean-100",
+            "max_audio_length": 40.0,
+            "max_text_length": 400
+          }
+        },
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "train-clean-360",
+            "max_audio_length": 40.0,
+            "max_text_length": 400
+          }
+        },
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "train-other-500",
+            "max_audio_length": 40.0,
+            "max_text_length": 400
+          }
+        }
+      ]
+    },
+    "val": {
+      "batch_size": 64,
+      "num_workers": 4,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "dev-clean"
+          }
+        }
+      ]
+    },
+    "test-other": {
+      "batch_size": 64,
+      "num_workers": 4,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "test-other"
+          }
+        }
+      ]
+    },
+    "test-clean": {
+      "batch_size": 64,
+      "num_workers": 4,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "test-clean"
+          }
+        }
+      ]
+    }
+  },
+  "optimizer": {
+    "type": "AdamW",
+    "args": {
+      "lr": 3e-4,
+      "weight_decay": 1e-5
+    }
+  },
+  "loss": {
+    "type": "CTCLoss",
+    "args": {}
+  },
+  "metrics": [
+    {
+      "type": "ArgmaxWERMetric",
+      "args": {
+        "name": "WER (argmax)"
+      }
+    },
+    {
+      "type": "ArgmaxCERMetric",
+      "args": {
+        "name": "CER (argmax)"
+      }
+    },
+    {
+      "type": "BeamSearchWERMetric",
+      "args": {
+        "beam_size": 4,
+        "name": "WER (beam search)"
+      }
+    },
+    {
+      "type": "BeamSearchCERMetric",
+      "args": {
+        "beam_size": 4,
+        "name": "CER (beam search)"
+      }
+    },
+    {
+      "type": "LanguageModelWERMetric",
+      "args": {
+        "name": "WER (LM)"
+      }
+    },
+    {
+      "type": "LanguageModelCERMetric",
+      "args": {
+        "name": "CER (LM)"
+      }
+    }
+  ],
+  "lr_scheduler": {
+    "type": "OneCycleLR",
+    "args": {
+      "steps_per_epoch": 1000,
+      "epochs": 50,
+      "anneal_strategy": "cos",
+      "max_lr": 3e-4,
+      "pct_start": 0.1
+    }
+  },
+  "trainer": {
+    "epochs": 50,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 100,
+    "visualize": "wandb",
+    "wandb_project": "asr_project",
+    "len_epoch": 1000,
+    "grad_norm_clip": 10
+  }
+}
