@@ -1,7 +1,3 @@
-from hw_asr.model.baseline_model import BaselineModel
-from hw_asr.model.deepspeech2_model import DeepSpeech2Model
+from src.model.spex_plus_model import SpExPlusModel
 
-__all__ = [
-    "BaselineModel",
-    "DeepSpeech2Model",
-]
+__all__ = ["SpExPlusModel"]

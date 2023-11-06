@@ -3,8 +3,8 @@ from abc import abstractmethod
 import torch
 from numpy import inf
 
-from hw_asr.base import BaseModel
-from hw_asr.logger import get_visualizer
+from src.base import BaseModel
+from src.logger import get_visualizer
 
 
 class BaseTrainer:
@@ -48,9 +48,7 @@ class BaseTrainer:
         self.checkpoint_dir = config.save_dir
 
         # setup visualization writer instance
-        self.writer = get_visualizer(
-            config, self.logger, cfg_trainer["visualize"]
-        )
+        self.writer = get_visualizer(config, self.logger, cfg_trainer["visualize"])
 
         if config.resume is not None:
             self._load_model(config.resume)
@@ -105,9 +103,7 @@ class BaseTrainer:
                 except KeyError:
                     self.logger.warning(
                         "Warning: Metric '{}' is not found. "
-                        "Model performance monitoring is disabled.".format(
-                            self.mnt_metric
-                        )
+                        "Model performance monitoring is disabled.".format(self.mnt_metric)
                     )
                     self.mnt_mode = "off"
                     improved = False
@@ -164,10 +160,9 @@ class BaseTrainer:
         self.logger.info("Loading model: {} ...".format(resume_path))
         checkpoint = torch.load(resume_path, self.device)
         self.model.load_state_dict(checkpoint["state_dict"])
-        
+
         self.logger.info("Model loaded")
-        
-        
+
     def _resume_checkpoint(self, resume_path):
         """
         Resume from saved checkpoints
@@ -190,8 +185,8 @@ class BaseTrainer:
 
         # load optimizer state from checkpoint only when optimizer type is not changed.
         if (
-                checkpoint["config"]["optimizer"] != self.config["optimizer"] or
-                checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]
+            checkpoint["config"]["optimizer"] != self.config["optimizer"]
+            or checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]
         ):
             self.logger.warning(
                 "Warning: Optimizer or lr_scheduler given in config file is different "
@@ -200,6 +195,4 @@ class BaseTrainer:
         else:
             self.optimizer.load_state_dict(checkpoint["optimizer"])
 
-        self.logger.info(
-            "Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch)
-        )
+        self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))

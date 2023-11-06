@@ -108,5 +108,6 @@ wandb/
 
 # editor, os cache directory
 .vscode/
+dla.code-workspace
 .idea/
 __MACOSX/

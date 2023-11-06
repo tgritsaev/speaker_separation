@@ -6,11 +6,11 @@ from pathlib import Path
 import torch
 from tqdm import tqdm
 
-import hw_asr.model as module_model
-from hw_asr.trainer import Trainer
-from hw_asr.utils import ROOT_PATH
-from hw_asr.utils.object_loading import get_dataloaders
-from hw_asr.utils.parse_config import ConfigParser
+import src.model as module_model
+from src.trainer import Trainer
+from src.utils import ROOT_PATH
+from src.utils.object_loading import get_dataloaders
+from src.utils.parse_config import ConfigParser
 
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
@@ -53,9 +53,7 @@ def main(config, out_file):
             else:
                 batch["logits"] = output
             batch["log_probs"] = torch.log_softmax(batch["logits"], dim=-1)
-            batch["log_probs_length"] = model.transform_input_lengths(
-                batch["spectrogram_length"]
-            )
+            batch["log_probs_length"] = model.transform_input_lengths(batch["spectrogram_length"])
             batch["probs"] = batch["log_probs"].exp().cpu()
             batch["argmax"] = batch["probs"].argmax(-1)
             for i in range(len(batch["text"])):
@@ -156,9 +154,7 @@ if __name__ == "__main__":
                         "type": "CustomDirAudioDataset",
                         "args": {
                             "audio_dir": str(test_data_folder / "audio"),
-                            "transcription_dir": str(
-                                test_data_folder / "transcriptions"
-                            ),
+                            "transcription_dir": str(test_data_folder / "transcriptions"),
                         },
                     }
                 ],

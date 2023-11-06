@@ -1,5 +1,5 @@
 from torch import Tensor
-from hw_asr.augmentations.base import AugmentationBase
+from src.augmentations.base import AugmentationBase
 from torchaudio import transforms
 
 

@@ -1,0 +1,92 @@
+{
+    "num_workers": 4,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {
+                "n_mels": 256
+            }
+        },
+        "log_spec": true
+    },
+    "data": {
+        "train": {
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "train-clean-100",
+                        "max_audio_length": 40.0,
+                        "max_text_length": 400
+                    }
+                },
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "train-clean-360",
+                        "max_audio_length": 40.0,
+                        "max_text_length": 400
+                    }
+                }
+            ],
+            "mixture_generator_init": {
+                "test": false,
+                "out_folder": "data/mixture/train",
+                "nfiles": 130
+            },
+            "mixture_generator_generate_mixes": {
+                "snr_levels": [-5, 5],
+                "num_workers": 2,
+                "update_steps": 100,
+                "trim_db": 20,
+                "vad_db": 20,
+                "audioLen": 3
+            }
+        },
+        "val": {
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "dev-clean"
+                    }
+                }
+            ],
+            "mixture_generator_init": {
+                "test": true,
+                "out_folder": "data/mixture/val"
+            },
+            "mixture_generator_generate_mixes": {
+                "snr_levels": [-5, 5],
+                "num_workers": 2,
+                "update_steps": 100,
+                "trim_db": null,
+                "vad_db": 20,
+                "audioLen": 3
+            }
+        },
+        "test": {
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "test-clean"
+                    }
+                }
+            ],
+            "mixture_generator_init": {
+                "test": true,
+                "out_folder": "data/mixture/test"
+            },
+            "mixture_generator_generate_mixes": {
+                "snr_levels": [-5, 5],
+                "num_workers": 2,
+                "update_steps": 100,
+                "trim_db": null,
+                "vad_db": 20,
+                "audioLen": 3
+            }
+        }
+    }
+}

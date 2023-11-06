@@ -7,11 +7,11 @@ from functools import reduce, partial
 from operator import getitem
 from pathlib import Path
 
-from hw_asr import text_encoder as text_encoder_module
-from hw_asr.base.base_text_encoder import BaseTextEncoder
-from hw_asr.logger import setup_logging
-from hw_asr.text_encoder import CTCCharTextEncoder
-from hw_asr.utils import read_json, write_json, ROOT_PATH
+from src import text_encoder as text_encoder_module
+from src.base.base_text_encoder import BaseTextEncoder
+from src.logger import setup_logging
+from src.text_encoder import CTCCharTextEncoder
+from src.utils import read_json, write_json, ROOT_PATH
 
 
 class ConfigParser:
@@ -69,8 +69,7 @@ class ConfigParser:
             resume = Path(args.resume)
             cfg_fname = resume.parent / "config.json"
         else:
-            msg_no_cfg = "Configuration file need to be specified. " \
-                         "Add '-c config.json', for example."
+            msg_no_cfg = "Configuration file need to be specified. " "Add '-c config.json', for example."
             assert args.config is not None, msg_no_cfg
             resume = None
             cfg_fname = Path(args.config)
@@ -81,9 +80,7 @@ class ConfigParser:
             config.update(read_json(args.config))
 
         # parse custom cli options into dictionary
-        modification = {
-            opt.target: getattr(args, _get_opt_name(opt.flags)) for opt in options
-        }
+        modification = {opt.target: getattr(args, _get_opt_name(opt.flags)) for opt in options}
         return cls(config, resume, modification)
 
     @staticmethod
@@ -101,9 +98,7 @@ class ConfigParser:
 
         module_name = obj_dict["type"]
         module_args = dict(obj_dict["args"])
-        assert all(
-            [k not in module_args for k in kwargs]
-        ), "Overwriting kwargs given in config file is not allowed"
+        assert all([k not in module_args for k in kwargs]), "Overwriting kwargs given in config file is not allowed"
         module_args.update(kwargs)
         return getattr(default_module, module_name)(*args, **module_args)
 
@@ -118,9 +113,7 @@ class ConfigParser:
         """
         module_name = self[name]["type"]
         module_args = dict(self[name]["args"])
-        assert all(
-            [k not in module_args for k in kwargs]
-        ), "Overwriting kwargs given in config file is not allowed"
+        assert all([k not in module_args for k in kwargs]), "Overwriting kwargs given in config file is not allowed"
         module_args.update(kwargs)
         return partial(getattr(module, module_name), *args, **module_args)
 
@@ -144,8 +137,7 @@ class ConfigParser:
             elif self._config["text_encoder"] == "CTCCharTextEncoder":
                 self._text_encoder = CTCCharTextEncoder(self._config["text_encoder"]["args"])
             else:
-                self._text_encoder = self.init_obj(self["text_encoder"],
-                                                   default_module=text_encoder_module)
+                self._text_encoder = self.init_obj(self["text_encoder"], default_module=text_encoder_module)
         return self._text_encoder
 
     # setting read-only attributes
@@ -163,13 +155,13 @@ class ConfigParser:
 
     @classmethod
     def get_default_configs(cls):
-        config_path = ROOT_PATH / "hw_asr" / "config.json"
+        config_path = ROOT_PATH / "src" / "config.json"
         with config_path.open() as f:
             return cls(json.load(f))
 
     @classmethod
     def get_test_configs(cls):
-        config_path = ROOT_PATH / "hw_asr" / "tests" / "config.json"
+        config_path = ROOT_PATH / "src" / "tests" / "config.json"
         with config_path.open() as f:
             return cls(json.load(f))
 

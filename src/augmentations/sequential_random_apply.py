@@ -1,7 +1,7 @@
 from typing import List, Callable
 from torch import Tensor
 import random
-from hw_asr.augmentations.base import AugmentationBase
+from src.augmentations.base import AugmentationBase
 
 
 class SequentialRandomApply(AugmentationBase):

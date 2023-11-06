@@ -1,5 +1,3 @@
-from hw_asr.loss.CTCLossWrapper import CTCLossWrapper as CTCLoss
+from .spex_plus_loss import SpExPlusLoss
 
-__all__ = [
-    "CTCLoss"
-]
+__all__ = ["SpExPlusLoss"]
