@@ -194,4 +194,9 @@ class SpExPlusModel(BaseModel):
         s_short, s_middle, s_long = self.speech_decoder(*[ys[i] * extracted_speech[i] for i in range(len(ys))])
         ylen = y_wav.shape[-1]
 
-        return {"speaker_pred": speaker_preds, "s1": F.pad(s_short[:, :ylen], (0, ylen)), "s2": s_middle[:, :ylen], "s3": s_long[:, :ylen]}
+        return {
+            "speaker_pred": speaker_preds,
+            "s1": F.pad(s_short[:, :ylen], (0, max(ylen - s_short.shape[1], 0))),
+            "s2": s_middle[:, :ylen],
+            "s3": s_long[:, :ylen],
+        }
