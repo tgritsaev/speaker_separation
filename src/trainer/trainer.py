@@ -187,8 +187,8 @@ class Trainer(BaseTrainer):
 
         def get_i(**batch):
             out = {}
-            print(batch)
             for key, value in batch.items():
+                print(key)
                 print(value)
                 out[key] = value[i]
             return out
