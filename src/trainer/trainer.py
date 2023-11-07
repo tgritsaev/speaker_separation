@@ -1,15 +1,13 @@
 import random
-from pathlib import Path
-from random import shuffle
+from tqdm import tqdm
 
 import PIL
 import pandas as pd
 import numpy as np
 import torch
-import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torchvision.transforms import ToTensor
-from tqdm import tqdm
+import pyloudnorm as pyln
 
 from src.base import BaseTrainer
 from src.logger.utils import plot_spectrogram_to_buf
@@ -51,6 +49,8 @@ class Trainer(BaseTrainer):
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer)
         self.evaluation_metrics = MetricTracker("loss", *[m.name for m in self.metrics], writer=self.writer)
+
+        self.meter = pyln.Meter(16000)
 
     @staticmethod
     def move_batch_to_device(batch, device: torch.device):
@@ -125,6 +125,12 @@ class Trainer(BaseTrainer):
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
 
+        normalized_s = torch.zeros_like(batch["s1"], device=batch["s1"].device)
+        for i in range(batch["s1"].shape[0]):
+            louds = self.meter.integrated_loudness(batch["s1"][i])
+            normalized_s[i] = torch.from_numpy(pyln.normalize.loudness(batch["s1"][i].numpy(), louds, -23.0))
+        batch.update({"normalized_s": normalized_s})
+
         metrics.update("loss", batch["loss"].item())
         for met in self.metrics:
             metrics.update(met.name, met(**batch))
@@ -167,9 +173,7 @@ class Trainer(BaseTrainer):
         y_wav,
         x_wav,
         target_wav,
-        s1,
-        s2,
-        s3,
+        normalized_s,
         speaker_pred,
         speaker_id,
         examples_to_log=4,
@@ -188,9 +192,7 @@ class Trainer(BaseTrainer):
         rows = {}
         for i in ids:
             rows[i] = {
-                "s1": get_wandb_audio(s1[i]),
-                "s2": get_wandb_audio(s2[i]),
-                "s3": get_wandb_audio(s3[i]),
+                "norm_pred": get_wandb_audio(normalized_s[i]),
                 "mixed": get_wandb_audio(y_wav[i]),
                 "ref": get_wandb_audio(x_wav[i]),
                 "target": get_wandb_audio(target_wav[i]),

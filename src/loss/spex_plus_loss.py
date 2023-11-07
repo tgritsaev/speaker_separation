@@ -2,12 +2,10 @@ import torch
 import torch.nn as nn
 
 
-EPS = 1e-6
-
-
 def si_sdr(estimated, target):
+    eps = 1e-6
     alpha = (target * estimated).sum() / (torch.linalg.norm(target) ** 2)
-    return 20 * torch.log10(torch.linalg.norm(alpha * target) / (torch.linalg.norm(alpha * target - estimated) + EPS) + EPS)
+    return 20 * torch.log10(torch.linalg.norm(alpha * target) / (torch.linalg.norm(alpha * target - estimated) + eps) + eps)
 
 
 # https://www.isca-speech.org/archive/pdfs/interspeech_2020/ge20_interspeech.pdf, 2.4. Multi-task learning
