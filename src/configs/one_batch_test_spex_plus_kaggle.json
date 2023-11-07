@@ -32,7 +32,7 @@
     },
     "data": {
         "train": {
-        "batch_size": 2,
+        "batch_size": 3,
         "num_workers": 0,
         "datasets": [
             {
@@ -76,7 +76,7 @@
         "epochs": 10,
         "anneal_strategy": "cos",
         "max_lr": 1e-3,
-        "pct_start": 0.1
+        "pct_start": 0.2
         }
     },
     "trainer": {
