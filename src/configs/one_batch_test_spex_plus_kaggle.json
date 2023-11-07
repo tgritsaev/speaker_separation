@@ -49,7 +49,7 @@
     "optimizer": {
         "type": "AdamW",
         "args": {
-        "lr": 3e-4,
+        "lr": 1e-3,
         "weight_decay": 0
         }
     },
@@ -95,6 +95,6 @@
         "visualize": "wandb",
         "wandb_project": "dla2_ss_project_check",
         "len_epoch": 100,
-        "grad_norm_clip": 100
+        "grad_norm_clip": 25
     }
 }

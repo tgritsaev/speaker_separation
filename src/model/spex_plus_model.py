@@ -153,8 +153,7 @@ class SpeakerExtractor(nn.Module):
         self.norm = Norm(SpeakerExtractor.mul1 * channels_cnt)
         self.conv1 = nn.Conv1d(SpeakerExtractor.mul1 * channels_cnt, channels_cnt, 1)
         self.stacked_TCNs = nn.ModuleList([StackedTCNs(channels_cnt, speaker_channels_cnt, TCN_cnt) for _ in range(4)])
-        self.convs = nn.ModuleList([nn.Conv1d(channels_cnt, channels_cnt, 1) for _ in range(3)])
-        self.activation = nn.ReLU()
+        self.convs = nn.ModuleList([nn.Sequential(nn.Conv1d(channels_cnt, channels_cnt, 1), nn.ReLU()) for _ in range(3)])
 
     def forward(self, x, speaker_embedding):
         x = self.norm(x)
@@ -162,7 +161,7 @@ class SpeakerExtractor(nn.Module):
         for stacked_TCNs in self.stacked_TCNs:
             x = stacked_TCNs(x, speaker_embedding)
 
-        extracted_speech = [self.activation(self.convs[i](x)) for i in range(len(self.convs))]
+        extracted_speech = [conv(x) for conv in self.convs]
         return extracted_speech
 
 
