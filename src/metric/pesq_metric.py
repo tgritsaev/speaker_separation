@@ -3,7 +3,7 @@ from torchmetrics.audio.pesq import PerceptualEvaluationSpeechQuality
 
 
 class PESQMetric(BaseMetric):
-    def __init__(self, fs=16000, mode="nb"):
+    def __init__(self, fs=16000, mode="wb"):
         super().__init__()
         self.metric = PerceptualEvaluationSpeechQuality(fs, mode)
 
