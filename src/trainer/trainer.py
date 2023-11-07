@@ -189,6 +189,7 @@ class Trainer(BaseTrainer):
             out = {}
             print(batch)
             for key, value in batch.items():
+                print(value)
                 out[key] = value[i]
             return out
 
