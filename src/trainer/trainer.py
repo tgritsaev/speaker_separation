@@ -75,7 +75,7 @@ class Trainer(BaseTrainer):
         self.model.train()
         self.train_metrics.reset()
         self.writer.add_scalar("epoch", epoch)
-        for batch_idx, batch in enumerate(tqdm(self.train_dataloader, desc="train", total=self.len_epoch - 1)):
+        for batch_idx, batch in enumerate(tqdm(self.train_dataloader, desc="train", total=self.len_epoch)):
             try:
                 batch = self.process_batch(batch, is_train=True, metrics=self.train_metrics)
             except RuntimeError as e:
@@ -117,14 +117,6 @@ class Trainer(BaseTrainer):
         if type(outputs) is dict:
             batch.update(outputs)
 
-        batch["loss"] = self.criterion(**batch)
-        if is_train:
-            batch["loss"].backward()
-            self._clip_grad_norm()
-            self.optimizer.step()
-            if self.lr_scheduler is not None:
-                self.lr_scheduler.step()
-
         wavs = batch["s1"]
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
         for i in range(wavs.shape[0]):
@@ -134,7 +126,15 @@ class Trainer(BaseTrainer):
             normalized_s[i] = torch.from_numpy(pyln.normalize.loudness(numpy_wav, louds, -23)).to(tensor_wav.device)
         batch.update({"normalized_s": normalized_s})
 
-        metrics.update("loss", batch["loss"].item())
+        if is_train:
+            batch["loss"] = self.criterion(**batch)
+            batch["loss"].backward()
+            self._clip_grad_norm()
+            self.optimizer.step()
+            if self.lr_scheduler is not None:
+                self.lr_scheduler.step()
+            metrics.update("loss", batch["loss"].item())
+
         for metric in self.metrics:
             metrics.update(metric.name, metric(**batch))
         return batch

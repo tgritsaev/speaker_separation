@@ -102,7 +102,7 @@
         "monitor": "min val_loss",
         "early_stop": 100,
         "visualize": "wandb",
-        "wandb_project": "dla2_ss_project_check",
+        "wandb_project": "dla2_ss",
         "len_epoch": 10,
         "grad_norm_clip": 25
     }
