@@ -1,9 +1,6 @@
 {
     "name": "one_batch_test",
     "n_gpu": 1,
-    "text_encoder": {
-        "type": "CTCCharTextEncoder"
-    },
     "preprocessing": {
         "sr": 16000,
         "spectrogram": {

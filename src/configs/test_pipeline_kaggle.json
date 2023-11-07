@@ -3,7 +3,8 @@
     "n_gpu": 1,
     "preprocessing": {
         "sr": 16000,
-        "spectrogram": {}
+        "spectrogram": {},
+        "log_spec": true
     },
     "augmentations": {
         "random_apply_p": 0.5,
