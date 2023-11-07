@@ -135,8 +135,8 @@ class Trainer(BaseTrainer):
         batch.update({"normalized_s": normalized_s})
 
         metrics.update("loss", batch["loss"].item())
-        for met in self.metrics:
-            metrics.update(met.name, met(**batch))
+        for metric in self.metrics:
+            metrics.update(metric.name, metric(**batch))
         return batch
 
     def _evaluation_epoch(self, epoch, part, dataloader):
@@ -188,7 +188,6 @@ class Trainer(BaseTrainer):
         def get_i_tensors_for_metrics(i, **batch):
             out = {}
             for key, value in batch.items():
-                print(key)
                 if torch.is_tensor(value) and key != "loss":
                     out[key] = value[i]
             return out
@@ -201,10 +200,9 @@ class Trainer(BaseTrainer):
                 "ref": get_wandb_audio(x_wav[i]),
                 "target": get_wandb_audio(target_wav[i]),
             }
-            for met in self.metrics:
+            for metric in self.metrics:
                 kwargs = get_i_tensors_for_metrics(i, **batch)
-                print(kwargs)
-                rows[i].update(met.name, met(**kwargs))
+                rows[i].update({metric.name, metric(**kwargs)})
 
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
