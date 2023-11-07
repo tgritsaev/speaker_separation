@@ -179,6 +179,7 @@ class SpeechDecoder(nn.Module):
 class SpExPlusModel(BaseModel):
     def __init__(self, L1, L2, L3, N, ResNetBlock_cnt, TCN_cnt, speakers_cnt):
         super().__init__()
+        print("!!!speakers_cnt", speakers_cnt)
         self.speech_encoder = SpeechEncoder(L1, L2, L3, N)
         self.speaker_encoder = SpeakerEncoder(N, ResNetBlock_cnt, L1, self.speech_encoder.stride, speakers_cnt)
         self.speaker_extractor = SpeakerExtractor(N, N, TCN_cnt)

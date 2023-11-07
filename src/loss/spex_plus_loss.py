@@ -18,7 +18,6 @@ class SpExPlusLoss(nn.Module):
         self.ce_loss = nn.CrossEntropyLoss()
 
     def forward(self, s1, s2, s3, speaker_pred, target_wav, speaker_id, **kwargs):
-        print("!!", s1.shape, target_wav.shape)
         s1 = s1 - s1.mean(dim=-1, keepdim=True)
         s2 = s2 - s2.mean(dim=-1, keepdim=True)
         s3 = s3 - s3.mean(dim=-1, keepdim=True)
@@ -28,6 +27,5 @@ class SpExPlusLoss(nn.Module):
         loss_si_sdr = (
             -(1 - self.alpha - self.beta) * si_sdr(s1, target_wav).sum() - self.alpha * si_sdr(s2, target_wav).sum() - self.beta * si_sdr(s3, target_wav).sum()
         ) / batch_size
-        print(speaker_pred.shape, min(speaker_id), max(speaker_id))
         ce = self.ce_loss(speaker_pred, speaker_id.to(speaker_pred.device))
         return loss_si_sdr + self.gamma * ce
