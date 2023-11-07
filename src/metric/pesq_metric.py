@@ -8,4 +8,4 @@ class PESQMetric(BaseMetric):
         self.metric = PerceptualEvaluationSpeechQuality(fs, mode)
 
     def __call__(self, s1, target_wav, **kwargs):
-        return self.metric(s1, target_wav, **kwargs)
+        return self.metric(s1, target_wav)
