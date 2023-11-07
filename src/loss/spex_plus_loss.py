@@ -28,5 +28,6 @@ class SpExPlusLoss(nn.Module):
         loss_si_sdr = (
             -(1 - self.alpha - self.beta) * si_sdr(s1, target_wav).sum() - self.alpha * si_sdr(s2, target_wav).sum() - self.beta * si_sdr(s3, target_wav).sum()
         ) / batch_size
+        print(speaker_pred.shape, min(speaker_id), max(speaker_id))
         ce = self.ce_loss(speaker_pred, speaker_id.to(speaker_pred.device))
         return loss_si_sdr + self.gamma * ce

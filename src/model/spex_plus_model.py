@@ -195,7 +195,6 @@ class SpExPlusModel(BaseModel):
         ylen = y_wav.shape[-1]
 
         ss__ = F.pad(s_short[:, :ylen], (0, max(ylen - s_short.shape[1], 0)))
-        print(ss__.shape, ylen)
 
         return {
             "speaker_pred": speaker_preds,
