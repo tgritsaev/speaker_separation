@@ -128,7 +128,7 @@ class Trainer(BaseTrainer):
         normalized_s = torch.zeros_like(batch["s1"], device=batch["s1"].device)
         for i in range(batch["s1"].shape[0]):
             tensor_wav = batch["s1"][i]
-            numpy_wav = tensor_wav.cpu().numpy()
+            numpy_wav = tensor_wav.detach().cpu().numpy()
             louds = self.meter.integrated_loudness(numpy_wav)
             normalized_s[i] = torch.from_numpy(pyln.normalize.loudness(numpy_wav, louds, -23.0)).to(tensor_wav.device)
         batch.update({"normalized_s": normalized_s})
