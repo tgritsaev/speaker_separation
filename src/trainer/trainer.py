@@ -201,8 +201,7 @@ class Trainer(BaseTrainer):
                 "target": get_wandb_audio(target_wav[i]),
             }
             for met in self.metrics:
-                print(batch)
-                kwargs = get_i(batch)
+                kwargs = get_i(**batch)
                 print(kwargs)
                 rows[i].update(met.name, met(**kwargs))
 
