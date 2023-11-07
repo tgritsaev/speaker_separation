@@ -153,7 +153,7 @@ class Trainer(BaseTrainer):
                 batch = self.process_batch(batch, is_train=False, metrics=self.evaluation_metrics, part=part, epoch=epoch)
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_predictions(**batch)
-            self._log_spectrogram(batch["spectrogram"])
+            # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
 
         # add histogram of model parameters to the tensorboard
