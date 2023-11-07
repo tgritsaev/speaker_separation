@@ -31,8 +31,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "train-clean-100-mixed",
-                        "max_audio_length": null,
-                        "limit": null
+                        "limit": 10
                     }
                 }
             ]
@@ -44,7 +43,8 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "test-clean-mixed"
+                        "part": "test-clean-mixed",
+                        "limit": 10
                     }
                 }
             ]
