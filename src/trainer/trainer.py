@@ -171,24 +171,25 @@ class Trainer(BaseTrainer):
             total = self.len_epoch
         return base.format(current, total, 100.0 * current / total)
 
-    def _log_predictions(
-        self,
-        y_wav,
-        x_wav,
-        target_wav,
-        normalized_s,
-        examples_to_log=4,
-        *args,
-        **kwargs,
-    ):
+    def _log_predictions(self, **batch):
+        y_wav = batch["y_wav"]
+        x_wav = batch["x_wav"]
+        target_wav = batch["target_wav"]
+        normalized_s = batch["normalized_s"]
         if self.writer is None:
             return
         batch_size = y_wav.shape[0]
-        examples_to_log = min(examples_to_log, batch_size)
+        examples_to_log = min(4, batch_size)
         ids = np.random.choice(batch_size, examples_to_log, replace=False)
 
         def get_wandb_audio(tensor):
             return self.writer.wandb.Audio(tensor.detach().cpu().numpy(), sample_rate=16000)
+
+        def get_i(**batch):
+            out = {}
+            for key, value in batch.items():
+                out[key] = value[i]
+            return out
 
         rows = {}
         for i in ids:
@@ -198,6 +199,8 @@ class Trainer(BaseTrainer):
                 "ref": get_wandb_audio(x_wav[i]),
                 "target": get_wandb_audio(target_wav[i]),
             }
+            for met in self.metrics:
+                rows[i].update(met.name, met(**get_i(batch)))
 
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
