@@ -13,13 +13,7 @@ def collate_fn(dataset_items: List[dict]):
     y_wav, x_wav, x_wav_len, target_wav, speaker_id = [], [], [], [], []
 
     def get_max_length(key_):
-        def get__(item):
-            print(item)
-            print()
-            print(item[key_])
-            return item[key_].shape[1]
-
-        return max(dataset_items, key=get__).shape[1]
+        return max(dataset_items, key=lambda item: item[key_].shape[1])[key_].shape[1]
 
     def pad_to_len(wav, len):
         return F.pad(wav, (1, len - wav.shape[1]))
