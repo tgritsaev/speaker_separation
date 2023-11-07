@@ -22,15 +22,16 @@ class MixtureDataset(BaseDataset):
         super().__init__(index, *args, **kwargs)
 
     def _map_speakers(self, index):
-        print("speakers mapping is started...")
-        speaker_cnt = 0
+        logging.info("speakers mapping is started...")
+        speakers_cnt = 0
         self.speaker_mapping = {}
         for i in tqdm(range(0, len(index), 3)):
             speaker_id = get_speaker_id_by_path(index[i])
             if speaker_id not in self.speaker_mapping.keys():
-                self.speaker_mapping[speaker_id] = speaker_cnt
-                speaker_cnt += 1
-        print(f"speakers mapping is finished, speaker_cnt: {speaker_cnt}")
+                self.speaker_mapping[speaker_id] = speakers_cnt
+                speakers_cnt += 1
+        self.speakers_cnt = speakers_cnt
+        logging.info(f"speakers mapping is finished, speakers_cnt: {speakers_cnt}")
 
     def __len__(self):
         return self.len

@@ -27,8 +27,7 @@
       "L3": 80, 
       "N": 256, 
       "ResNetBlock_cnt": 3,
-      "TCN_cnt": 8,
-      "speakers_cnt": 1000
+      "TCN_cnt": 8
     }
   },
   "data": {
