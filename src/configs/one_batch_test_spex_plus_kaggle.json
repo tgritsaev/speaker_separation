@@ -32,7 +32,7 @@
     },
     "data": {
         "train": {
-        "batch_size": 3,
+        "batch_size": 2,
         "num_workers": 0,
         "datasets": [
             {
