@@ -7,10 +7,10 @@
     "preprocessing": {
         "sr": 16000,
         "spectrogram": {
-        "type": "MelSpectrogram",
-        "args": {
-            "n_mels": 512
-        }
+            "type": "MelSpectrogram",
+            "args": {
+                "n_mels": 512
+            }
         },
         "log_spec": true
     },
@@ -22,12 +22,12 @@
     "arch": {
         "type": "SpExPlusModel",
         "args": {
-        "L1": 20, 
-        "L2": 80, 
-        "L3": 160, 
-        "N": 256, 
-        "ResNetBlock_cnt": 3,
-        "TCN_cnt": 8
+            "L1": 20, 
+            "L2": 80, 
+            "L3": 160, 
+            "N": 256, 
+            "ResNetBlock_cnt": 3,
+            "TCN_cnt": 8
         }
     },
     "data": {
@@ -36,12 +36,12 @@
         "num_workers": 0,
         "datasets": [
             {
-            "type": "MixtureDataset",
-            "args": {
-                "part": "train-clean-100-mixed",
-                "max_audio_length": 20.0,
-                "limit": 10
-            }
+                "type": "MixtureDataset",
+                "args": {
+                    "part": "train-clean-100-mixed",
+                    "max_audio_length": 20.0,
+                    "limit": 10
+                }
             }
         ]
         }
@@ -49,8 +49,8 @@
     "optimizer": {
         "type": "AdamW",
         "args": {
-        "lr": 1e-3,
-        "weight_decay": 0
+            "lr": 1e-2,
+            "weight_decay": 0
         }
     },
     "loss": {
@@ -73,7 +73,6 @@
             "args": {
                 "name": "SI-SDR"
             }
-        }
         },
         {
             "type": "AccuracyMetric",
@@ -88,7 +87,7 @@
         "steps_per_epoch": 100,
         "epochs": 10,
         "anneal_strategy": "cos",
-        "max_lr": 1e-3,
+        "max_lr": 1e-2,
         "pct_start": 0.2
         }
     },
