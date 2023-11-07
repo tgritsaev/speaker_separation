@@ -81,7 +81,6 @@ class BaseDataset(Dataset):
             index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
             logger.info(f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset")
 
-        print("!!!!!!!", limit)
         if limit is not None:
             random.seed(42)  # best seed for deep learning
             ids = np.random.choice(initial_size // 3, limit)
@@ -92,6 +91,5 @@ class BaseDataset(Dataset):
                 right = 3 * (i + 1)
                 new_index += index[left:right]
             index = new_index
-            print("!!!!!!!", index)
-            print("!!!!!!!", len(index))
+
         return index
