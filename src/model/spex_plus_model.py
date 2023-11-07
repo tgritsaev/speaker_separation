@@ -27,8 +27,8 @@ class SpeechEncoder(nn.Module):
         len2 = (final_len - 1) * self.stride + self.L2
         len3 = (final_len - 1) * self.stride + self.L3
 
-        x2 = self.middle(F.pad(x, (0, len2 - len1)))
-        x3 = self.long(F.pad(x, (0, len3 - len1)))
+        x2 = self.middle(F.pad(x, (0, len2 - len1), "constant", 0))
+        x3 = self.long(F.pad(x, (0, len3 - len1), "constant", 0))
 
         if return_other:
             return torch.cat([x1, x2, x3], 1), [x1, x2, x3]
