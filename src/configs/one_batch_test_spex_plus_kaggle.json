@@ -67,6 +67,12 @@
             "args": {
                 "name": "PESQ"
             }
+        },
+        {
+            "type": "SISDRMetric",
+            "args": {
+                "name": "SI-SDR"
+            }
         }
     ],
     "lr_scheduler": {
