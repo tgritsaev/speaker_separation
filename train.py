@@ -30,6 +30,7 @@ def main(config):
     dataloaders = get_dataloaders(config)
 
     # build model architecture, then print to console
+
     model = config.init_obj(config["arch"], module_arch)
     logger.info(model)
 

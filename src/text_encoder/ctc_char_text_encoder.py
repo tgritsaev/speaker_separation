@@ -1,8 +1,6 @@
 from typing import List, NamedTuple
 
 import torch
-from pyctcdecode import build_ctcdecoder
-
 
 from src.base.base_text_encoder import BaseTextEncoder
 from .char_text_encoder import CharTextEncoder
@@ -17,17 +15,11 @@ class Hypothesis(NamedTuple):
 class CTCCharTextEncoder(CharTextEncoder):
     EMPTY_TOK = "^"
 
-    def __init__(self, alphabet: List[str] = None, kenlm_model_path: str = None, unigrams_path: str = None):
+    def __init__(self, alphabet: List[str] = None):
         super().__init__(alphabet)
         vocab = [self.EMPTY_TOK] + list(self.alphabet)
         self.ind2char = dict(enumerate(vocab))
         self.char2ind = {v: k for k, v in self.ind2char.items()}
-        if kenlm_model_path is not None:
-            with open(unigrams_path) as f:
-                unigrams = [line.strip() for line in f.readlines()]
-            self.decoder = build_ctcdecoder(
-                labels=[""] + self.alphabet, kenlm_model_path=kenlm_model_path, unigrams=unigrams
-            )
 
     def ctc_decode(self, inds: List[int]) -> str:
         # TODO: your code here
