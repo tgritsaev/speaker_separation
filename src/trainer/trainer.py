@@ -202,7 +202,7 @@ class Trainer(BaseTrainer):
             }
             for metric in self.metrics:
                 kwargs = get_i_tensors_for_metrics(i, **batch)
-                rows[i].update({metric.name, metric(**kwargs)})
+                rows[i].update({metric.name: metric(**kwargs)})
 
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
