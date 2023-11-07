@@ -83,8 +83,6 @@ class BaseDataset(Dataset):
 
         print("!!!!!!!", limit)
         if limit is not None:
-            random.seed(42)  # best seed for deep learning
-            random.shuffle(index)
             index = index[: 3 * limit]
         print("!!!!!!!", index)
         return index
