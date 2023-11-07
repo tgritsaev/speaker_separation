@@ -33,7 +33,7 @@
     "data": {
         "train": {
         "batch_size": 2,
-        "num_workers": 0,
+        "num_workers": 1,
         "datasets": [
             {
                 "type": "MixtureDataset",

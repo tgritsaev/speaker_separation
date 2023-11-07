@@ -179,7 +179,7 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
         batch_size = y_wav.shape[0]
-        examples_to_log = min(4, batch_size)
+        examples_to_log = min(2, batch_size)
         ids = np.random.choice(batch_size, examples_to_log, replace=False)
 
         def get_wandb_audio(tensor):
