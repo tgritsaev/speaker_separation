@@ -83,6 +83,14 @@ class BaseDataset(Dataset):
 
         print("!!!!!!!", limit)
         if limit is not None:
+            random.seed(42)  # best seed for deep learning
+            ids = np.random.choice(len(index), limit)
+            new_index = []
+            for i in ids:
+                left = 3 * i
+                right = 3 * (i + 1)
+                new_index += index[left:right]
+            index = new_index
             index = index[: 3 * limit]
         print("!!!!!!!", index)
         return index
