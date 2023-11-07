@@ -20,16 +20,16 @@ class MixtureDataset(BaseDataset):
         else:
             self.path = Path("data/mixture/" + part)
         index = sorted(list(os.listdir(self.path)))
-        self._map_speakers(index)
         self.len = len(index) // 3
         super().__init__(index, *args, **kwargs)
+        self._map_speakers()
 
-    def _map_speakers(self, index):
+    def _map_speakers(self):
         logging.info("speakers mapping is started...")
         speakers_cnt = 0
         self.speaker_mapping = {}
-        for i in tqdm(range(0, len(index), 3)):
-            speaker_id = get_speaker_id_by_path(index[i])
+        for i in tqdm(range(0, len(self._index), 3)):
+            speaker_id = get_speaker_id_by_path(self._index[i])
             if speaker_id not in self.speaker_mapping.keys():
                 self.speaker_mapping[speaker_id] = speakers_cnt
                 speakers_cnt += 1

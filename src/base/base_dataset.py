@@ -76,14 +76,15 @@ class BaseDataset(Dataset):
 
         initial_size = len(index)
         records_to_filter = exceeds_audio_length
-
         if records_to_filter is not False and records_to_filter.any():
             _total = records_to_filter.sum()
             index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
             logger.info(f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset")
 
+        print("!!!!!!!", limit)
         if limit is not None:
             random.seed(42)  # best seed for deep learning
             random.shuffle(index)
-            index = index[:limit]
+            index = index[: 3 * limit]
+        print("!!!!!!!", index)
         return index
