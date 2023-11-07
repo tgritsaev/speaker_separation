@@ -187,6 +187,7 @@ class Trainer(BaseTrainer):
 
         def get_i(**batch):
             out = {}
+            print(batch)
             for key, value in batch.items():
                 out[key] = value[i]
             return out
@@ -200,7 +201,10 @@ class Trainer(BaseTrainer):
                 "target": get_wandb_audio(target_wav[i]),
             }
             for met in self.metrics:
-                rows[i].update(met.name, met(**get_i(batch)))
+                print(batch)
+                kwargs = get_i(batch)
+                print(kwargs)
+                rows[i].update(met.name, met(**kwargs))
 
         self.writer.add_table("predictions", pd.DataFrame.from_dict(rows, orient="index"))
 
