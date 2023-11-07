@@ -44,7 +44,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "test-clean-100-mixed"
+                        "part": "test-clean-mixed"
                     }
                 }
             ]
