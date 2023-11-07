@@ -33,11 +33,11 @@
             "mixture_generator_init": {
                 "test": false,
                 "out_folder": "data/mixture/train",
-                "nfiles": 130
+                "nfiles": 20000
             },
             "mixture_generator_generate_mixes": {
                 "snr_levels": [-5, 5],
-                "num_workers": 2,
+                "num_workers": 4,
                 "update_steps": 100,
                 "trim_db": 20,
                 "vad_db": 20,
@@ -56,11 +56,11 @@
             "mixture_generator_init": {
                 "test": true,
                 "out_folder": "data/mixture/val",
-                "nfiles": 100
+                "nfiles": 1000
             },
             "mixture_generator_generate_mixes": {
                 "snr_levels": [-5, 5],
-                "num_workers": 2,
+                "num_workers": 4,
                 "update_steps": 100,
                 "trim_db": null,
                 "vad_db": 20,
@@ -79,11 +79,11 @@
             "mixture_generator_init": {
                 "test": true,
                 "out_folder": "data/mixture/test",
-                "nfiles": 100
+                "nfiles": 1000
             },
             "mixture_generator_generate_mixes": {
                 "snr_levels": [-5, 5],
-                "num_workers": 2,
+                "num_workers": 4,
                 "update_steps": 100,
                 "trim_db": null,
                 "vad_db": 20,

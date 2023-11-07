@@ -157,7 +157,6 @@ class MixtureGenerator:
                 wav_path1, wav_path2 = sample1["path"], sample2["path"]
             root1, root2 = Path(wav_path1).parent.parent, Path(wav_path2).parent.parent
 
-            print(root1)
             all_files_speaker1 = list(root1.rglob("*.flac"))
             target, reference = random.sample(all_files_speaker1, 2)
             noise = wav_path2
@@ -190,7 +189,7 @@ class MixtureGenerator:
 
         return triplets
 
-    def generate_mixes(self, snr_levels=[0], num_workers=2, update_steps=100, **kwargs):
+    def generate_mixes(self, snr_levels=[0], num_workers=4, update_steps=100, **kwargs):
         triplets = self.generate_triplets()
 
         with ProcessPoolExecutor(max_workers=num_workers) as pool:
