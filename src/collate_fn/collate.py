@@ -12,11 +12,11 @@ def collate_fn(dataset_items: List[dict]):
     """
     y_wav, x_wav, x_wav_len, target_wav, speaker_id = [], [], [], [], []
 
-    print(dataset_items)
-
     def get_max_length(key_):
         def get__(item):
             print(item)
+            print()
+            print(item[key_])
             return item[key_].shape[1]
 
         return max(dataset_items, key=get__).shape[1]
