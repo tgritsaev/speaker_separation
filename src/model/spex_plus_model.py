@@ -51,10 +51,10 @@ class ResNetBlock(nn.Module):
     def __init__(self, channels_cnt):
         super().__init__()
         self.part1 = nn.Sequential(
-            nn.Conv1d(channels_cnt, ResNetBlock.mul * channels_cnt, 1),
+            nn.Conv1d(channels_cnt, ResNetBlock.mul * channels_cnt, 1, bias=False),
             nn.BatchNorm1d(ResNetBlock.mul * channels_cnt),
             nn.PReLU(),
-            nn.Conv1d(ResNetBlock.mul * channels_cnt, channels_cnt, 1),
+            nn.Conv1d(ResNetBlock.mul * channels_cnt, channels_cnt, 1, bias=False),
             nn.BatchNorm1d(channels_cnt),
         )
         self.part2 = nn.Sequential(nn.PReLU(), nn.MaxPool1d(3))

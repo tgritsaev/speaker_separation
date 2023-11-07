@@ -23,8 +23,8 @@
         "type": "SpExPlusModel",
         "args": {
         "L1": 20, 
-        "L2": 40, 
-        "L3": 80, 
+        "L2": 80, 
+        "L3": 160, 
         "N": 256, 
         "ResNetBlock_cnt": 3,
         "TCN_cnt": 8
