@@ -26,8 +26,9 @@ def get_dataloaders(configs: ConfigParser):
         datasets = []
         for ds in params["datasets"]:
             datasets.append(configs.init_obj(ds, src.datasets, config_parser=configs, wave_augs=wave_augs, spec_augs=spec_augs))
+        if "train" in split:
+            configs["arch"]["args"].update({"speakers_cnt": datasets[0].speakers_cnt})
 
-        configs["arch"]["args"].update({"speakers_cnt": datasets[0].speakers_cnt})
         assert len(datasets)
         if len(datasets) > 1:
             dataset = ConcatDataset(datasets)

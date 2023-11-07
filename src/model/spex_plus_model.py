@@ -179,7 +179,6 @@ class SpeechDecoder(nn.Module):
 class SpExPlusModel(BaseModel):
     def __init__(self, L1, L2, L3, N, ResNetBlock_cnt, TCN_cnt, speakers_cnt):
         super().__init__()
-        print("!!!speakers_cnt", speakers_cnt)
         self.speech_encoder = SpeechEncoder(L1, L2, L3, N)
         self.speaker_encoder = SpeakerEncoder(N, ResNetBlock_cnt, L1, self.speech_encoder.stride, speakers_cnt)
         self.speaker_extractor = SpeakerExtractor(N, N, TCN_cnt)
@@ -194,12 +193,10 @@ class SpExPlusModel(BaseModel):
         extracted_speech = self.speaker_extractor(y, speaker_embedding)
         s_short, s_middle, s_long = self.speech_decoder(*[ys[i] * extracted_speech[i] for i in range(len(ys))])
         ylen = y_wav.shape[-1]
-
-        ss__ = F.pad(s_short[:, :ylen], (0, max(ylen - s_short.shape[1], 0)))
-
+        
         return {
             "speaker_pred": speaker_preds,
-            "s1": ss__,
+            "s1": F.pad(s_short[:, :ylen], (0, max(ylen - s_short.shape[1], 0))),
             "s2": s_middle[:, :ylen],
             "s3": s_long[:, :ylen],
         }
