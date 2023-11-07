@@ -46,10 +46,10 @@
         ]
         }
     },
-       "optimizer": {
+    "optimizer": {
         "type": "AdamW",
         "args": {
-        "lr": 1e-3,
+        "lr": 3e-4,
         "weight_decay": 0
         }
     },
@@ -61,7 +61,14 @@
             "gamma": 10
         }
     },
-    "metrics": ["PESQMetric"],
+    "metrics": [
+        {
+            "type": "PESQMetric",
+            "args": {
+                "name": "PESQ"
+            }
+        }
+    ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
@@ -82,6 +89,6 @@
         "visualize": "wandb",
         "wandb_project": "dla2_ss_project_check",
         "len_epoch": 100,
-        "grad_norm_clip": 10
+        "grad_norm_clip": 100
     }
 }
