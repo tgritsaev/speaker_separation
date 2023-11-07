@@ -20,9 +20,9 @@ class MixtureDataset(BaseDataset):
         else:
             self.path = Path("data/mixture/" + part)
         index = sorted(list(os.listdir(self.path)))
-        self.len = len(index) // 3
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
+        self.len = len(self._index) // 3
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
