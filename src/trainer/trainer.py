@@ -189,7 +189,7 @@ class Trainer(BaseTrainer):
             out = {}
             for key, value in batch.items():
                 if torch.is_tensor(value) and key != "loss":
-                    out[key] = value[i]
+                    out[key] = value[i].unsqueeze(0)
             return out
 
         rows = {}
