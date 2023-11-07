@@ -28,7 +28,7 @@ class BaseDataset(Dataset):
         self.spec_augs = spec_augs
         self.log_spec = config_parser["preprocessing"]["log_spec"]
 
-        # index = self._filter_records_from_dataset(index, max_audio_length, limit)
+        index = self._filter_records_from_dataset(index, max_audio_length, limit)
         # it's a good idea to sort index by audio length
         # It would be easier to write length-based batch samplers later
         # index = self._sort_index(index)
@@ -64,29 +64,26 @@ class BaseDataset(Dataset):
                 audio_tensor_spec = torch.log(audio_tensor_spec + 1e-5)
             return audio_tensor_wave, audio_tensor_spec
 
-    # @staticmethod
-    # def _filter_records_from_dataset(index: list, max_audio_length, limit) -> list:
-    #     initial_size = len(index)
-    #     if max_audio_length is not None:
-    #         exceeds_audio_length = np.array([el["audio_len"] for el in index]) >= max_audio_length
-    #         _total = exceeds_audio_length.sum()
-    #         logger.info(
-    #             f"{_total} ({_total / initial_size:.1%}) records are longer then "
-    #             f"{max_audio_length} seconds. Excluding them."
-    #         )
-    #     else:
-    #         exceeds_audio_length = False
+    @staticmethod
+    def _filter_records_from_dataset(index: list, max_audio_length, limit) -> list:
+        initial_size = len(index)
+        if max_audio_length is not None:
+            exceeds_audio_length = np.array([el["audio_len"] for el in index]) >= max_audio_length
+            _total = exceeds_audio_length.sum()
+            logger.info(f"{_total} ({_total / initial_size:.1%}) records are longer then " f"{max_audio_length} seconds. Excluding them.")
+        else:
+            exceeds_audio_length = False
 
-    #     initial_size = len(index)
-    #     records_to_filter = exceeds_audio_length
+        initial_size = len(index)
+        records_to_filter = exceeds_audio_length
 
-    #     if records_to_filter is not False and records_to_filter.any():
-    #         _total = records_to_filter.sum()
-    #         index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
-    #         logger.info(f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset")
+        if records_to_filter is not False and records_to_filter.any():
+            _total = records_to_filter.sum()
+            index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
+            logger.info(f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset")
 
-    #     if limit is not None:
-    #         random.seed(42)  # best seed for deep learning
-    #         random.shuffle(index)
-    #         index = index[:limit]
-    #     return index
+        if limit is not None:
+            random.seed(42)  # best seed for deep learning
+            random.shuffle(index)
+            index = index[:limit]
+        return index
