@@ -185,11 +185,11 @@ class Trainer(BaseTrainer):
         def get_wandb_audio(tensor):
             return self.writer.wandb.Audio(tensor.detach().cpu().numpy(), sample_rate=16000)
 
-        def get_i(**batch):
+        def get_i_tensors_for_metrics(i, **batch):
             out = {}
             for key, value in batch.items():
-                print(key, value)
-                if torch.is_tensor(value):
+                print(key)
+                if torch.is_tensor(value) and key != "loss":
                     out[key] = value[i]
             return out
 
@@ -202,7 +202,7 @@ class Trainer(BaseTrainer):
                 "target": get_wandb_audio(target_wav[i]),
             }
             for met in self.metrics:
-                kwargs = get_i(**batch)
+                kwargs = get_i_tensors_for_metrics(i, **batch)
                 print(kwargs)
                 rows[i].update(met.name, met(**kwargs))
 
