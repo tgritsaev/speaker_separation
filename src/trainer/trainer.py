@@ -177,8 +177,6 @@ class Trainer(BaseTrainer):
         x_wav,
         target_wav,
         normalized_s,
-        speaker_pred,
-        speaker_id,
         examples_to_log=4,
         *args,
         **kwargs,

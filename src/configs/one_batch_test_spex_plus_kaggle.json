@@ -74,6 +74,13 @@
                 "name": "SI-SDR"
             }
         }
+        },
+        {
+            "type": "AccuracyMetric",
+            "args": {
+                "name": "accuracy"
+            }
+        }
     ],
     "lr_scheduler": {
         "type": "OneCycleLR",

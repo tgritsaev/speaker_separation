@@ -77,7 +77,7 @@ class SpeakerEncoder(nn.Module):
         self.conv1 = nn.Conv1d(SpeakerEncoder.mul * channels_cnt, channels_cnt, 1)
         self.resnet_blocks = nn.Sequential(*(ResNetBlock(channels_cnt) for _ in range(ResNetBlock_cnt)))
         self.conv2 = nn.Conv1d(channels_cnt, channels_cnt, 1)
-        self.linear = nn.Linear(channels_cnt, speakers_cnt)
+        self.classification = nn.Linear(channels_cnt, speakers_cnt)
 
     def forward(self, x, len):
         x = self.norm(x)
@@ -90,7 +90,7 @@ class SpeakerEncoder(nn.Module):
             final_len //= 3
         speaker_embedding = torch.sum(x, -1) / final_len.view(-1, 1).to(x.device)
 
-        return self.linear(speaker_embedding), speaker_embedding
+        return self.classification(speaker_embedding), speaker_embedding
 
 
 class GlobalLayerNorm(nn.Module):
