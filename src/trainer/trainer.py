@@ -188,6 +188,7 @@ class Trainer(BaseTrainer):
         def get_i(**batch):
             out = {}
             for key, value in batch.items():
+                print(key, value)
                 if torch.is_tensor(value):
                     out[key] = value[i]
             return out
