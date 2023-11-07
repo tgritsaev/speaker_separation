@@ -88,7 +88,7 @@ class SpeakerEncoder(nn.Module):
         final_len = (len - self.L1) // self.stride + 1
         for _ in range(self.ResNetBlock_cnt):
             final_len //= 3
-        speaker_embedding = torch.sum(x, -1) / final_len.view(-1, 1)
+        speaker_embedding = torch.sum(x, -1) / final_len.view(-1, 1).to(x.device)
 
         return self.linear(speaker_embedding), speaker_embedding
 

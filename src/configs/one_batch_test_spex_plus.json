@@ -33,7 +33,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 10,
+      "batch_size": 4,
       "num_workers": 0,
       "datasets": [
         {
@@ -47,13 +47,13 @@
       ]
     },
     "val": {
-      "batch_size": 10,
+      "batch_size": 4,
       "num_workers": 0,
       "datasets": [
         {
           "type": "MixtureDataset",
           "args": {
-            "part": "val",
+            "part": "train",
             "max_audio_length": 20.0,
             "limit": 10
           }

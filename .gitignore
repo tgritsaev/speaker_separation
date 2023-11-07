@@ -111,3 +111,9 @@ wandb/
 dla.code-workspace
 .idea/
 __MACOSX/
+
+# local logs
+runs/
+
+# 
+*.sbatch

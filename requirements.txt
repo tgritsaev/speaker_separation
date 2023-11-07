@@ -1,9 +1,7 @@
 torch==2.1.0
 torchvision==0.16.0
-torchmetrics==1.2.0
-numpy
+numpy==1.22
 tqdm
-tensorboard
 matplotlib
 pandas
 
@@ -15,6 +13,4 @@ wandb
 pyctcdecode
 torchaudio==2.1.0
 pillow
-soundfile
-pyloudnorm
-pesq
+kenlm

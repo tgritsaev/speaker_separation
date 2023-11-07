@@ -25,9 +25,7 @@ def get_dataloaders(configs: ConfigParser):
         # create and join datasets
         datasets = []
         for ds in params["datasets"]:
-            datasets.append(
-                configs.init_obj(ds, src.datasets, config_parser=configs, wave_augs=wave_augs, spec_augs=spec_augs)
-            )
+            datasets.append(configs.init_obj(ds, src.datasets, config_parser=configs, wave_augs=wave_augs, spec_augs=spec_augs))
         assert len(datasets)
         if len(datasets) > 1:
             dataset = ConcatDataset(datasets)
@@ -35,9 +33,7 @@ def get_dataloaders(configs: ConfigParser):
             dataset = datasets[0]
 
         # select batch size or batch sampler
-        assert xor(
-            "batch_size" in params, "batch_sampler" in params
-        ), "You must provide batch_size or batch_sampler for each split"
+        assert xor("batch_size" in params, "batch_sampler" in params), "You must provide batch_size or batch_sampler for each split"
         if "batch_size" in params:
             bs = params["batch_size"]
             shuffle = True

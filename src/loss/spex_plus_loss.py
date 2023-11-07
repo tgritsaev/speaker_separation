@@ -21,5 +21,5 @@ class SpExPlusLoss(nn.Module):
 
     def forward(self, s1, s2, s3, speaker_pred, target_wav, speaker_id, **kwargs):
         loss_si_sdr = -((1 - self.alpha - self.beta) * si_sdr(s1, target_wav) + self.alpha * si_sdr(s2, target_wav) + self.beta * si_sdr(s3, target_wav))
-        ce = self.ce_loss(speaker_pred, speaker_id)
+        ce = self.ce_loss(speaker_pred, speaker_id.to(speaker_pred.device))
         return loss_si_sdr + self.gamma * ce

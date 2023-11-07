@@ -172,13 +172,15 @@ class Trainer(BaseTrainer):
         s3,
         speaker_pred,
         speaker_id,
-        examples_to_log=5,
+        examples_to_log=4,
         *args,
         **kwargs,
     ):
         if self.writer is None:
             return
-        ids = np.random.choice(y_wav.shape[0], examples_to_log, replace=False)
+        batch_size = y_wav.shape[0]
+        examples_to_log = min(examples_to_log, batch_size)
+        ids = np.random.choice(batch_size, examples_to_log, replace=False)
 
         def get_wandb_audio(tensor):
             return self.writer.wandb.Audio(tensor.detach().numpy(), sample_rate=16000)
