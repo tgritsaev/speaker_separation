@@ -183,7 +183,7 @@ class Trainer(BaseTrainer):
         ids = np.random.choice(batch_size, examples_to_log, replace=False)
 
         def get_wandb_audio(tensor):
-            return self.writer.wandb.Audio(tensor.detach().numpy(), sample_rate=16000)
+            return self.writer.wandb.Audio(tensor.detach().cpu().numpy(), sample_rate=16000)
 
         rows = {}
         for i in ids:
