@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from hw_asr.base import BaseModel
+from src.base import BaseModel
 
 
 class RNNwBatchNorm(nn.Module):
