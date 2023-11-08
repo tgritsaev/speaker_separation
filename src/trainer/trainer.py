@@ -111,7 +111,7 @@ class Trainer(BaseTrainer):
             for batch_idx, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
                 batch = self.process_batch(batch, is_train=False, metrics=self.evaluation_metrics)
             self.writer.set_step(epoch * self.len_epoch, part)
-            self._log_predictions(**batch)
+            self._log_predictions(False, **batch)
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
 
@@ -130,7 +130,7 @@ class Trainer(BaseTrainer):
             total = self.len_epoch
         return base.format(current, total, 100.0 * current / total)
 
-    def _log_predictions(self, **batch):
+    def _log_predictions(self, is_train, **batch):
         y_wav = batch["y_wav"]
         x_wav = batch["x_wav"]
         target_wav = batch["target_wav"]
@@ -159,7 +159,9 @@ class Trainer(BaseTrainer):
                 "ref": get_wandb_audio(x_wav[i]),
                 "target": get_wandb_audio(target_wav[i]),
             }
-            for metric in self.evaluation_metrics:
+            for metric in self.metrics:
+                if not is_train and metric.ignore_on_eval:
+                    continue
                 kwargs = get_i_tensors_for_metrics(i, **batch)
                 rows[i].update({metric.name: metric(**kwargs)})
 
@@ -216,7 +218,7 @@ class Trainer(BaseTrainer):
                 self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
                 self.logger.debug("Train Epoch: {} {} Loss: {:.6f}".format(epoch, self._progress(batch_idx), batch["loss"].item()))
                 self.writer.add_scalar("learning rate", self.lr_scheduler.get_last_lr()[0])
-                self._log_predictions(**batch)
+                self._log_predictions(True, **batch)
                 self._log_scalars(self.train_metrics)
                 # we don't want to reset train metrics at the start of every epoch
                 # because we are interested in recent train metrics
