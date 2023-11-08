@@ -71,7 +71,7 @@ class Trainer(BaseTrainer):
         if is_train:
             self.optimizer.zero_grad()
 
-        with torch.autocast(device_type=self.device.type):
+        with torch.autocast(device_type=self.device.type, dtype=torch.float16):
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
@@ -142,7 +142,7 @@ class Trainer(BaseTrainer):
         ids = np.random.choice(batch_size, examples_to_log, replace=False)
 
         def get_wandb_audio(tensor):
-            return self.writer.wandb.Audio(tensor.detach().cpu().numpy(), sample_rate=16000)
+            return self.writer.wandb.Audio(tensor.detach().to(torch.float32).cpu().numpy(), sample_rate=16000)
 
         def get_i_tensors_for_metrics(i, **batch):
             out = {}
