@@ -6,6 +6,11 @@
         "spectrogram": {},
         "log_spec": true
     },
+    "augmentations": {
+        "random_apply_p": 0.5,
+        "wave": [],
+        "spectrogram": []
+    },
     "arch": {
         "type": "SpExPlusModel",
         "args": {
