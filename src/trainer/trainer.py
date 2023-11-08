@@ -71,7 +71,7 @@ class Trainer(BaseTrainer):
         if is_train:
             self.optimizer.zero_grad()
 
-        with torch.autocast(device_type=self.device.type, dtype=torch.float16):
+        with torch.autocast(device_type=self.device.type):
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
