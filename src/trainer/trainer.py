@@ -71,31 +71,31 @@ class Trainer(BaseTrainer):
         if is_train:
             self.optimizer.zero_grad()
 
-        # with torch.autocast(device_type=self.device.type, dtype=torch.float16):
-        #     outputs = self.model(**batch)
-        #     batch.update(outputs)
-        #     if is_train:
-        #         batch["loss"] = self.criterion(**batch)
-        # if is_train:
-        #     self.scaler.scale(batch["loss"]).backward()
-        #     self.scaler.unscale_(self.optimizer)
-        #     self._clip_grad_norm()
-        #     self.scaler.step(self.optimizer)
-        #     self.scaler.update()
-        #     if self.lr_scheduler is not None:
-        #         self.lr_scheduler.step()
-        #     metrics.update("loss", batch["loss"].item())
-
-        outputs = self.model(**batch)
-        batch.update(outputs)
+        with torch.autocast(device_type=self.device.type, dtype=torch.float16):
+            outputs = self.model(**batch)
+            batch.update(outputs)
+            if is_train:
+                batch["loss"] = self.criterion(**batch)
         if is_train:
-            batch["loss"] = self.criterion(**batch)
+            self.scaler.scale(batch["loss"]).backward()
+            self.scaler.unscale_(self.optimizer)
             self._clip_grad_norm()
-            batch["loss"].backward()
-            self.optimizer.step()
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
+
+        # outputs = self.model(**batch)
+        # batch.update(outputs)
+        # if is_train:
+        #     batch["loss"] = self.criterion(**batch)
+        #     self._clip_grad_norm()
+        #     batch["loss"].backward()
+        #     self.optimizer.step()
+        #     if self.lr_scheduler is not None:
+        #         self.lr_scheduler.step()
+        #     metrics.update("loss", batch["loss"].item())
 
         wavs = batch["s1"]
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
