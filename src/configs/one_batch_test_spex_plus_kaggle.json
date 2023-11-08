@@ -1,23 +1,10 @@
 {
     "name": "one_batch_test",
     "n_gpu": 1,
-    "text_encoder": {
-        "type": "CTCCharTextEncoder"
-    },
     "preprocessing": {
         "sr": 16000,
-        "spectrogram": {
-            "type": "MelSpectrogram",
-            "args": {
-                "n_mels": 512
-            }
-        },
+        "spectrogram": {},
         "log_spec": true
-    },
-    "augmentations": {
-        "random_apply_p": 0.5,
-        "wave": [],
-        "spectrogram": []
     },
     "arch": {
         "type": "SpExPlusModel",
@@ -84,7 +71,7 @@
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-        "steps_per_epoch": 100,
+        "steps_per_epoch": 25,
         "epochs": 10,
         "anneal_strategy": "cos",
         "max_lr": 1e-3,
@@ -100,7 +87,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss_project_check",
-        "len_epoch": 100,
+        "len_epoch": 25,
         "grad_norm_clip": 25
     }
 }

@@ -71,16 +71,27 @@ class Trainer(BaseTrainer):
         if is_train:
             self.optimizer.zero_grad()
 
-        with torch.autocast(device_type=self.device.type, dtype=torch.float16):
-            outputs = self.model(**batch)
-            batch.update(outputs)
-            if is_train:
-                batch["loss"] = self.criterion(**batch)
+        # with torch.autocast(device_type=self.device.type, dtype=torch.float16):
+        #     outputs = self.model(**batch)
+        #     batch.update(outputs)
+        #     if is_train:
+        #         batch["loss"] = self.criterion(**batch)
+        # if is_train:
+        #     self.scaler.scale(batch["loss"]).backward()
+        #     self.scaler.unscale_(self.optimizer)
+        #     self._clip_grad_norm()
+        #     self.scaler.update()
+        #     if self.lr_scheduler is not None:
+        #         self.lr_scheduler.step()
+        #     metrics.update("loss", batch["loss"].item())
+
+        outputs = self.model(**batch)
+        batch.update(outputs)
         if is_train:
-            self.scaler.scale(batch["loss"]).backward()
-            self.scaler.unscale_(self.optimizer)
+            batch["loss"] = self.criterion(**batch)
             self._clip_grad_norm()
-            self.scaler.update()
+            batch["loss"].backward()
+            self.optimizer.step()
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
