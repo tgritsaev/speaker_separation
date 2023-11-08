@@ -105,7 +105,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss",
-        "len_epoch": 2000,
+        "len_epoch": 1000,
         "grad_norm_clip": 25
     }
 }
