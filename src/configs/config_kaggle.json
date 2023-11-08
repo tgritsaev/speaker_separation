@@ -24,7 +24,7 @@
     },
     "data": {
         "train": {
-            "batch_size": 2,
+            "batch_size": 4,
             "num_workers": 1,
             "datasets": [
                 {
@@ -36,7 +36,7 @@
             ]
         },
         "test": {
-            "batch_size": 2,
+            "batch_size": 1,
             "num_workers": 1,
             "datasets": [
                 {
@@ -53,7 +53,7 @@
         "type": "AdamW",
         "args": {
             "lr": 1e-3,
-            "weight_decay": 0
+            "weight_decay": 1e-5
         }
     },
     "loss": {
@@ -80,30 +80,32 @@
         {
             "type": "AccuracyMetric",
             "args": {
-                "name": "accuracy"
+                "name": "accuracy",
+                "ignore_on_eval": true
             }
         }
     ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-        "steps_per_epoch": 1000,
-        "epochs": 30,
-        "anneal_strategy": "cos",
-        "max_lr": 1e-3,
-        "pct_start": 0.2
+            "steps_per_epoch": 2000,
+            "epochs": 10,
+            "anneal_strategy": "cos",
+            "max_lr": 1e-3,
+            "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 30,
+        "epochs": 10,
+        "iters_to_accumulate": 1,
         "save_dir": "saved/",
-        "save_period": 5,
+        "save_period": 1,
         "verbosity": 2,
-        "monitor": "min val_loss",
+        "monitor": "min test_loss",
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss",
-        "len_epoch": 1000,
+        "len_epoch": 2000,
         "grad_norm_clip": 25
     }
 }

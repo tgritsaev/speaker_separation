@@ -12,11 +12,8 @@ import pyloudnorm as pyln
 
 def snr_mixer(clean, noise, snr):
     amp_noise = np.linalg.norm(clean) / 10 ** (snr / 20)
-
     noise_norm = (noise / np.linalg.norm(noise)) * amp_noise
-
     mix = clean + noise_norm
-
     return mix
 
 
@@ -38,9 +35,9 @@ def cut_audios(s1, s2, sec, sr):
 
     segment = 0
     while (segment + 1) * cut_len < len1 and (segment + 1) * cut_len < len2:
-        s1_cut.append(s1[segment * cut_len : (segment + 1) * cut_len])
-        s2_cut.append(s2[segment * cut_len : (segment + 1) * cut_len])
-
+        left, right = segment * cut_len, (segment + 1) * cut_len
+        s1_cut.append(s1[left:right])
+        s2_cut.append(s2[left:right])
         segment += 1
 
     return s1_cut, s2_cut

@@ -5,7 +5,7 @@ from torch.utils.data import ConcatDataset, DataLoader
 import src.augmentations
 import src.datasets
 from src import batch_sampler as batch_sampler_module
-from src.collate_fn.collate import collate_fn
+from src.collate_fn.ss_collate import ss_collate_fn
 from src.utils.parse_config import ConfigParser
 
 
@@ -56,7 +56,7 @@ def get_dataloaders(configs: ConfigParser):
             batch_size=bs,
             shuffle=shuffle,
             num_workers=num_workers,
-            collate_fn=collate_fn,
+            collate_fn=ss_collate_fn,
             batch_sampler=batch_sampler,
             drop_last=drop_last,
         )
