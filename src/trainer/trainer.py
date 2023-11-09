@@ -48,7 +48,7 @@ class Trainer(BaseTrainer):
 
         self.scaler = torch.cuda.amp.GradScaler()
 
-        self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer)
+        self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics if not m.skip_on_train], writer=self.writer)
         self.evaluation_metrics = MetricTracker(*[m.name for m in self.metrics if not m.skip_on_test], writer=self.writer)
 
         self.meter = pyln.Meter(config["preprocessing"]["sr"])

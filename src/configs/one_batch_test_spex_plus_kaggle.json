@@ -3,7 +3,12 @@
     "n_gpu": 1,
     "preprocessing": {
         "sr": 16000,
-        "spectrogram": {},
+        "spectrogram": {
+        "type": "MelSpectrogram",
+        "args": {
+            "n_mels": 512
+        }
+        },
         "log_spec": true
     },
     "augmentations": {
@@ -14,12 +19,12 @@
     "arch": {
         "type": "SpExPlusModel",
         "args": {
-            "L1": 20, 
-            "L2": 80, 
-            "L3": 160, 
-            "N": 256, 
-            "ResNetBlock_cnt": 3,
-            "TCN_cnt": 8
+        "L1": 20, 
+        "L2": 80, 
+        "L3": 160, 
+        "N": 256, 
+        "ResNetBlock_cnt": 3,
+        "TCN_cnt": 8
         }
     },
     "data": {
@@ -28,12 +33,12 @@
         "num_workers": 1,
         "datasets": [
             {
-                "type": "MixtureDataset",
-                "args": {
-                    "part": "train-clean-100-mixed",
-                    "cut_mix": 144000,
-                    "limit": 10
-                }
+            "type": "MixtureDataset",
+            "args": {
+                "part": "train",
+                "max_audio_length": 20.0,
+                "limit": 10
+            }
             }
         ]
         }
@@ -41,8 +46,8 @@
     "optimizer": {
         "type": "AdamW",
         "args": {
-            "lr": 1e-3,
-            "weight_decay": 0
+        "lr": 1e-3,
+        "weight_decay": 0
         }
     },
     "loss": {
@@ -65,18 +70,12 @@
             "args": {
                 "name": "SI-SDR"
             }
-        },
-        {
-            "type": "AccuracyMetric",
-            "args": {
-                "name": "accuracy"
-            }
         }
     ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-        "steps_per_epoch": 25,
+        "steps_per_epoch": 2,
         "epochs": 10,
         "anneal_strategy": "cos",
         "max_lr": 1e-3,
@@ -92,7 +91,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss_project_check",
-        "len_epoch": 25,
+        "len_epoch": 2,
         "grad_norm_clip": 25
     }
 }
