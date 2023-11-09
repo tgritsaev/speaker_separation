@@ -82,8 +82,8 @@ class Trainer(BaseTrainer):
                 self._clip_grad_norm()
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
-                self.optimizer.zero_grad()
                 self.train_metrics.update("grad norm", self.get_grad_norm())
+                self.optimizer.zero_grad()
 
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
