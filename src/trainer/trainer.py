@@ -233,6 +233,9 @@ class Trainer(BaseTrainer):
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
 
+            if batch_idx + 1 == self.len_epoch:
+                break
+
         log = last_train_metrics
 
         for part, dataloader in self.evaluation_dataloaders.items():
