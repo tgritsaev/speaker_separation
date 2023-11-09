@@ -46,6 +46,7 @@ class Trainer(BaseTrainer):
         self.lr_scheduler = lr_scheduler
         self.log_step = 100
 
+        self.accumulation_steps = config["trainer"]["accumulation_steps"]
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics if not m.skip_on_train], writer=self.writer)
@@ -66,9 +67,9 @@ class Trainer(BaseTrainer):
         if self.config["trainer"].get("grad_norm_clip", None) is not None:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config["trainer"]["grad_norm_clip"])
 
-    def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
+    def process_batch(self, batch, is_train: bool, batch_idx: int, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
-        if is_train:
+        if is_train and ((batch_idx + 1) % self.accumulation_steps) == 0:
             self.optimizer.zero_grad()
         with torch.cuda.amp.autocast():
             outputs = self.model(**batch)
@@ -76,11 +77,12 @@ class Trainer(BaseTrainer):
             if is_train:
                 batch["loss"] = self.criterion(**batch)
         if is_train:
-            self.scaler.scale(batch["loss"]).backward()
-            self.scaler.unscale_(self.optimizer)
-            self._clip_grad_norm()
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
+            self.scaler.scale(batch["loss"] / self.accumulation_steps).backward()
+            if ((batch_idx + 1) % self.accumulation_steps) == 0:
+                self.scaler.unscale_(self.optimizer)
+                self._clip_grad_norm()
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
@@ -124,7 +126,7 @@ class Trainer(BaseTrainer):
         self.evaluation_metrics.reset()
         with torch.no_grad():
             for batch_idx, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
-                batch = self.process_batch(batch, False, metrics=self.evaluation_metrics)
+                batch = self.process_batch(batch, False, batch_idx, metrics=self.evaluation_metrics)
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_predictions(False, **batch)
             # self._log_spectrogram(batch["spectrogram"])
@@ -214,7 +216,7 @@ class Trainer(BaseTrainer):
         self.writer.add_scalar("epoch", epoch)
         for batch_idx, batch in enumerate(tqdm(self.train_dataloader, desc="train", total=self.len_epoch)):
             try:
-                batch = self.process_batch(batch, True, metrics=self.train_metrics)
+                batch = self.process_batch(batch, True, 0, metrics=self.train_metrics)
             except RuntimeError as e:
                 if "out of memory" in str(e) and self.skip_oom:
                     self.logger.warning("OOM on batch. Skipping batch.")
