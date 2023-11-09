@@ -88,7 +88,7 @@
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-            "steps_per_epoch": 2,
+            "steps_per_epoch": 20,
             "epochs": 8,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
@@ -96,7 +96,7 @@
         }
     },
     "trainer": {
-        "accumulation_steps": 2,
+        "accumulation_steps": 20,
         "epochs": 8,
         "iters_to_accumulate": 1,
         "save_dir": "saved/",
