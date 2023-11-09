@@ -51,9 +51,7 @@ class WanDBWriter:
         self.wandb.log({self._scalar_name(scalar_name): self.wandb.Image(image)}, step=self.step)
 
     def add_audio(self, scalar_name, audio, sample_rate=None):
-        print("here")
         audio = audio.detach().cpu().numpy().T
-        print("!")
         self.wandb.log({self._scalar_name(scalar_name): self.wandb.Audio(audio, sample_rate=sample_rate)}, step=self.step)
 
     def add_text(self, scalar_name, text):

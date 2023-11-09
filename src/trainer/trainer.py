@@ -70,7 +70,6 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
-        print(batch["y_wav"].shape)
         with torch.autocast(device_type=self.device.type, dtype=torch.float16):
             outputs = self.model(**batch)
             batch.update(outputs)
