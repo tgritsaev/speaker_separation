@@ -69,7 +69,7 @@
         {
             "type": "PESQMetric",
             "args": {
-                "name": "PESQ",
+                "name": "PESQ"
             }
         },
         {
