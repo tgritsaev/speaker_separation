@@ -128,7 +128,7 @@ class Trainer(BaseTrainer):
         self.evaluation_metrics.reset()
         with torch.no_grad():
             for batch_idx, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
-                batch = self.process_batch(batch, False, batch_idx, metrics=self.evaluation_metrics)
+                batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_predictions(False, **batch)
             # self._log_spectrogram(batch["spectrogram"])
@@ -218,7 +218,7 @@ class Trainer(BaseTrainer):
         self.writer.add_scalar("epoch", epoch)
         for batch_idx, batch in enumerate(tqdm(self.train_dataloader, desc="train", total=self.len_epoch)):
             try:
-                batch = self.process_batch(batch, True, 0, metrics=self.train_metrics)
+                batch = self.process_batch(batch, True, batch_idx, metrics=self.train_metrics)
             except RuntimeError as e:
                 if "out of memory" in str(e) and self.skip_oom:
                     self.logger.warning("OOM on batch. Skipping batch.")
