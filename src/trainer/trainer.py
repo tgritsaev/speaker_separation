@@ -219,6 +219,7 @@ class Trainer(BaseTrainer):
         self.writer.add_scalar("epoch", epoch)
         for batch_idx, batch in enumerate(tqdm(self.train_dataloader, desc="train", total=self.len_epoch)):
             try:
+                print(batch["x_wav"].shape, batch["y_wav"].shape, batch["target_wav"].shape)
                 batch = self.process_batch(batch, True, batch_idx, metrics=self.train_metrics)
             except RuntimeError as e:
                 if "out of memory" in str(e) and self.skip_oom:
