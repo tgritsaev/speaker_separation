@@ -64,7 +64,7 @@ class Trainer(BaseTrainer):
 
     def _clip_grad_norm(self):
         if self.config["trainer"].get("grad_norm_clip", None) is not None:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config["trainer"]["grad_norm_clip"])
+            torch.nn.utils.clip_grad_norm_(torch.nan_to_num(self.model.parameters()), self.config["trainer"]["grad_norm_clip"])
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
@@ -232,8 +232,10 @@ class Trainer(BaseTrainer):
                 # because we are interested in recent train metrics
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
-            if batch_idx + 1 >= self.len_epoch:
-                break
+
+            if batch_idx % 25 == 0:
+                torch.cuda.empty_cache()
+
         log = last_train_metrics
 
         for part, dataloader in self.evaluation_dataloaders.items():

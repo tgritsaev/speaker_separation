@@ -106,6 +106,6 @@
         "visualize": "wandb",
         "wandb_project": "dla2_ss",
         "len_epoch": 2000,
-        "grad_norm_clip": null
+        "grad_norm_clip": 25
     }
 }
