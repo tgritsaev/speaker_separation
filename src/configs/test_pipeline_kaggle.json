@@ -24,14 +24,14 @@
     },
     "data": {
         "train": {
-            "batch_size": 3,
+            "batch_size": 6,
             "num_workers": 1,
             "datasets": [
                 {
                     "type": "MixtureDataset",
                     "args": {
                         "part": "train-clean-100-mixed",
-                        "cut_mix": 100000
+                        "cut_mix": 96000
                     }
                 }
             ]
