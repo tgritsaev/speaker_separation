@@ -98,9 +98,11 @@ class Trainer(BaseTrainer):
 
         wavs = batch["s1"]
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
+        print("HERE")
         for i in range(wavs.shape[0]):
-            tensor_wav = torch.nan_to_num(wavs[i])
+            tensor_wav = torch.nan_to_num(wavs[i], nan=0)
             normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
+        print("!")
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
@@ -168,7 +170,7 @@ class Trainer(BaseTrainer):
                 "target": get_wandb_audio(target_wav[i]),
             }
             for metric in self.metrics:
-                if not is_train and metric.ignore_on_eval:
+                if not is_train and metric.skip_on_test:
                     continue
                 kwargs = get_i_tensors_for_metrics(i, **batch)
                 rows[i].update({metric.name: metric(**kwargs)})
