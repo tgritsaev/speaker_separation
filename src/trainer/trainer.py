@@ -47,13 +47,12 @@ class Trainer(BaseTrainer):
         self.log_step = 100
 
         self.accumulation_steps = config["trainer"].get("accumulation_steps", 1)
-        print("!!!", self.accumulation_steps)
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics if not m.skip_on_train], writer=self.writer)
         self.evaluation_metrics = MetricTracker(*[m.name for m in self.metrics if not m.skip_on_test], writer=self.writer)
 
-        self.meter = pyln.Meter(config["preprocessing"]["sr"])
+        self.meter = pyln.Meter(config["preprocessing"].get("sr", 16000))
 
     @staticmethod
     def move_batch_to_device(batch, device: torch.device):
