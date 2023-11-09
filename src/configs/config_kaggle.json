@@ -92,7 +92,7 @@
             "epochs": 8,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
-            "pct_start": 0.2
+            "pct_start": 0.1
         }
     },
     "trainer": {
