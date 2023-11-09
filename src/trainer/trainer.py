@@ -64,7 +64,7 @@ class Trainer(BaseTrainer):
 
     def _clip_grad_norm(self):
         if self.config["trainer"].get("grad_norm_clip", None) is not None:
-            torch.nn.utils.clip_grad_norm_(torch.nan_to_num(self.model.parameters()), self.config["trainer"]["grad_norm_clip"])
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config["trainer"]["grad_norm_clip"])
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
@@ -187,7 +187,7 @@ class Trainer(BaseTrainer):
             parameters = [parameters]
         parameters = [p for p in parameters if p.grad is not None]
         total_norm = torch.norm(
-            torch.stack([torch.norm(p.grad.detach(), norm_type).cpu() for p in parameters]),
+            torch.stack([torch.norm(torch.nan_to_num(p.grad.detach(), nan=0), norm_type).cpu() for p in parameters]),
             norm_type,
         )
         return total_norm.item()
