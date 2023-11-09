@@ -77,7 +77,9 @@ class Trainer(BaseTrainer):
                 batch["loss"] = self.criterion(**batch) / self.accumulation_steps
         if is_train:
             self.scaler.scale(batch["loss"]).backward()
+            print(batch_idx)
             if (batch_idx + 1) % self.accumulation_steps == 0 or (batch_idx + 1) == self.len_epoch:
+                print("!!!!")
                 self.scaler.unscale_(self.optimizer)
                 self._clip_grad_norm()
                 self.scaler.step(self.optimizer)
