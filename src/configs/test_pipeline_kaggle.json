@@ -31,6 +31,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "train-clean-100-mixed",
+                        "cut_mix": 144000,
                         "limit": 10
                     }
                 }

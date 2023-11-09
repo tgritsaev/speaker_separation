@@ -15,7 +15,7 @@ def ss_collate_fn(dataset_items: List[dict]):
     def pad_to_len(wav, len):
         return F.pad(wav, (1, len - wav.shape[1]))
 
-    max_x_wav_length = min(get_max_length("x_wav"), 48000 * 3)
+    max_x_wav_length = get_max_length("x_wav")
     max_y_target_wav_length = max(get_max_length("y_wav"), get_max_length("target_wav"))
     for item in dataset_items:
         y_wav.append(pad_to_len(item["y_wav"], max_y_target_wav_length))
