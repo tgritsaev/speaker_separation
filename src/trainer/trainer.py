@@ -70,7 +70,7 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
-        with torch.autocast(device_type=self.device.type, dtype=torch.float16):
+        with torch.autocast(device_type=self.device.type):
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
@@ -104,11 +104,9 @@ class Trainer(BaseTrainer):
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
-            # if not is_train and metric.skip_on_test:
-            #     continue
-            # if is_train and metric.skip_on_train:
-            #     continue
-            if metric.name == "PESQ":
+            if not is_train and metric.skip_on_test:
+                continue
+            if is_train and metric.skip_on_train:
                 continue
             metrics.update(metric.name, metric(**batch))
         return batch
@@ -237,8 +235,6 @@ class Trainer(BaseTrainer):
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
 
-            if batch_idx % 25 == 0:
-                torch.cuda.empty_cache()
             if batch_idx + 1 >= self.len_epoch:
                 break
 
