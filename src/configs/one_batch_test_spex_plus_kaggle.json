@@ -32,7 +32,7 @@
                     "args": {
                         "part": "train-clean-100-mixed",
                         "limit": 10,
-                        "cut_mix": 60000
+                        "cut_mix": 45000
                     }
                 }
             ]
