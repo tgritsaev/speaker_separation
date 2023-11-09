@@ -194,6 +194,7 @@ class Trainer(BaseTrainer):
         if isinstance(parameters, torch.Tensor):
             parameters = [parameters]
         parameters = [p for p in parameters if p.grad is not None]
+
         total_norm = torch.norm(
             torch.stack([torch.norm(torch.nan_to_num(p.grad.detach(), nan=0), norm_type).cpu() for p in parameters]),
             norm_type,
