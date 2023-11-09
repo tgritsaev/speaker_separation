@@ -46,7 +46,7 @@ class Trainer(BaseTrainer):
         self.lr_scheduler = lr_scheduler
         self.log_step = 100
 
-        self.accumulation_steps = config["trainer"]["accumulation_steps"]
+        self.accumulation_steps = config["trainer"].get("accumulation_steps", 1)
         print("!!!", self.accumulation_steps)
         self.scaler = torch.cuda.amp.GradScaler()
 
