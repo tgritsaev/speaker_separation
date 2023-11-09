@@ -69,8 +69,7 @@
         {
             "type": "PESQMetric",
             "args": {
-                "name": "PESQ",
-                "skip_on_train": true
+                "name": "PESQ"
             }
         },
         {
@@ -82,8 +81,7 @@
         {
             "type": "AccuracyMetric",
             "args": {
-                "name": "accuracy",
-                "skip_on_test": true
+                "name": "accuracy"
             }
         }
     ],

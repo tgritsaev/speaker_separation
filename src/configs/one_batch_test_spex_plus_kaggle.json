@@ -106,7 +106,7 @@
         "monitor": "min test_loss",
         "early_stop": 100,
         "visualize": "wandb",
-        "wandb_project": "dla2_ss",
+        "wandb_project": "dla2_ss_check",
         "len_epoch": 2,
         "grad_norm_clip": 25
     }

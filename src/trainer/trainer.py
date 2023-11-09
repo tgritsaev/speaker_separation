@@ -104,9 +104,11 @@ class Trainer(BaseTrainer):
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
-            if not is_train and metric.skip_on_test:
-                continue
-            if is_train and metric.skip_on_train:
+            # if not is_train and metric.skip_on_test:
+            #     continue
+            # if is_train and metric.skip_on_train:
+            #     continue
+            if metric.name == "PESQ":
                 continue
             metrics.update(metric.name, metric(**batch))
         return batch
@@ -235,6 +237,8 @@ class Trainer(BaseTrainer):
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
 
+            if batch_idx % 25 == 0:
+                torch.cuda.empty_cache()
             if batch_idx + 1 >= self.len_epoch:
                 break
 
