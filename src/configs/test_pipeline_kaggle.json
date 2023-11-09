@@ -31,8 +31,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "train-clean-100-mixed",
-                        "cut_mix": 144000,
-                        "limit": 10
+                        "cut_mix": 120000
                     }
                 }
             ]
@@ -45,7 +44,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "test-clean-mixed",
-                        "limit": 10
+                        "limit": 1000
                     }
                 }
             ]
@@ -55,7 +54,7 @@
         "type": "AdamW",
         "args": {
             "lr": 1e-3,
-            "weight_decay": 0
+            "weight_decay": 1e-5
         }
     },
     "loss": {
@@ -70,7 +69,8 @@
         {
             "type": "PESQMetric",
             "args": {
-                "name": "PESQ"
+                "name": "PESQ",
+                "skip_on_train": true
             }
         },
         {
@@ -82,30 +82,32 @@
         {
             "type": "AccuracyMetric",
             "args": {
-                "name": "accuracy"
+                "name": "accuracy",
+                "skip_on_test": true
             }
         }
     ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-        "steps_per_epoch": 10,
-        "epochs": 20,
-        "anneal_strategy": "cos",
-        "max_lr": 1e-3,
-        "pct_start": 0.2
+            "steps_per_epoch": 2,
+            "epochs": 8,
+            "anneal_strategy": "cos",
+            "max_lr": 1e-3,
+            "pct_start": 0.1
         }
     },
     "trainer": {
-        "epochs": 20,
+        "epochs": 8,
+        "iters_to_accumulate": 1,
         "save_dir": "saved/",
-        "save_period": 5,
+        "save_period": 1,
         "verbosity": 2,
-        "monitor": "min val_loss",
+        "monitor": "min test_loss",
         "early_stop": 100,
         "visualize": "wandb",
-        "wandb_project": "dla2_ss_project_check",
-        "len_epoch": 10,
-        "grad_norm_clip": null
+        "wandb_project": "dla2_ss",
+        "len_epoch": 2,
+        "grad_norm_clip": 25
     }
 }

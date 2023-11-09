@@ -104,6 +104,8 @@ class Trainer(BaseTrainer):
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
+            if not is_train and metric.skip_on_test:
+                continue
             if is_train and metric.skip_on_train:
                 continue
             metrics.update(metric.name, metric(**batch))
