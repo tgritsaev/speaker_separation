@@ -96,7 +96,7 @@
         }
     },
     "trainer": {
-        "accumulation_steps": 20,
+        "accumulation_steps": 2,
         "epochs": 8,
         "iters_to_accumulate": 1,
         "save_dir": "saved/",
@@ -106,7 +106,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss_check",
-        "len_epoch": 2,
+        "len_epoch": 20,
         "grad_norm_clip": 25
     }
 }
