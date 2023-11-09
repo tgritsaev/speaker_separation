@@ -47,6 +47,7 @@ class Trainer(BaseTrainer):
         self.log_step = 100
 
         self.accumulation_steps = config["trainer"]["accumulation_steps"]
+        print("!!!", self.accumulation_steps)
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics if not m.skip_on_train], writer=self.writer)
