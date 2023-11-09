@@ -70,7 +70,7 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
-        with torch.cuda.amp.autocast(device_type=self.device.type):
+        with torch.cuda.amp.autocast():
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
