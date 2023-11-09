@@ -49,7 +49,7 @@ class Trainer(BaseTrainer):
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics], writer=self.writer)
-        self.evaluation_metrics = MetricTracker(*[m.name for m in self.metrics if not m.ignore_on_eval], writer=self.writer)
+        self.evaluation_metrics = MetricTracker(*[m.name for m in self.metrics if not m.skip_on_test], writer=self.writer)
 
         self.meter = pyln.Meter(config["preprocessing"]["sr"])
 
@@ -100,10 +100,12 @@ class Trainer(BaseTrainer):
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
         for i in range(wavs.shape[0]):
             tensor_wav = torch.nan_to_num(wavs[i])
-            normalized_s[i] = 20 * tensor_wav / tensor_wav.norm()
+            normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
+            if is_train and metric.skip_on_train:
+                continue
             metrics.update(metric.name, metric(**batch))
         return batch
 
