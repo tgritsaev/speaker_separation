@@ -44,7 +44,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "test-clean-mixed",
-                        "limit": 1000
+                        "limit": 2
                     }
                 }
             ]
