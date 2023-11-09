@@ -98,11 +98,9 @@ class Trainer(BaseTrainer):
 
         wavs = batch["s1"]
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
-        print("HERE")
         for i in range(wavs.shape[0]):
             tensor_wav = torch.nan_to_num(wavs[i], nan=0)
             normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-        print("!")
         batch.update({"normalized_s": normalized_s})
 
         for metric in self.metrics:
@@ -234,9 +232,6 @@ class Trainer(BaseTrainer):
                 # because we are interested in recent train metrics
                 last_train_metrics = self.train_metrics.result()
                 self.train_metrics.reset()
-
-            if batch_idx % 25 == 0:
-                torch.cuda.empty_cache()
 
         log = last_train_metrics
 
