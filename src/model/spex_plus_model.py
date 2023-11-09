@@ -173,7 +173,7 @@ class SpeechDecoder(nn.Module):
         self.long = nn.ConvTranspose1d(channels_cnt, 1, L3, L1 // 2)
 
     def forward(self, x_short, x_middle, x_long):
-        return self.short(x_short).squeeze(), self.middle(x_middle).squeeze(), self.long(x_long).squeeze()
+        return self.short(x_short).squeeze(1), self.middle(x_middle).squeeze(1), self.long(x_long).squeeze(1)
 
 
 class SpExPlusModel(BaseModel):
@@ -193,7 +193,7 @@ class SpExPlusModel(BaseModel):
         extracted_speech = self.speaker_extractor(y, speaker_embedding)
         s_short, s_middle, s_long = self.speech_decoder(*[ys[i] * extracted_speech[i] for i in range(len(ys))])
         ylen = y_wav.shape[-1]
-        
+
         return {
             "speaker_pred": speaker_preds,
             "s1": F.pad(s_short[:, :ylen], (0, max(ylen - s_short.shape[1], 0))),
