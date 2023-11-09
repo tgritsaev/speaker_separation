@@ -70,20 +70,20 @@ class Trainer(BaseTrainer):
 
     def process_batch(self, batch, is_train: bool, batch_idx: int, metrics: MetricTracker):
         batch = self.move_batch_to_device(batch, self.device)
-        if is_train and ((batch_idx + 1) % self.accumulation_steps) == 0:
-            self.optimizer.zero_grad()
         with torch.cuda.amp.autocast():
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
-                batch["loss"] = self.criterion(**batch)
+                batch["loss"] = self.criterion(**batch) / self.accumulation_steps
         if is_train:
-            self.scaler.scale(batch["loss"] / self.accumulation_steps).backward()
-            if ((batch_idx + 1) % self.accumulation_steps) == 0:
+            self.scaler.scale(batch["loss"]).backward()
+            if (batch_idx + 1) % self.accumulation_steps == 0 or (batch_idx + 1) == self.len_epoch:
                 self.scaler.unscale_(self.optimizer)
                 self._clip_grad_norm()
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
+                self.optimizer.zero_grad()
+
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
