@@ -24,14 +24,14 @@
     },
     "data": {
         "train": {
-            "batch_size": 3,
+            "batch_size": 4,
             "num_workers": 1,
             "datasets": [
                 {
                     "type": "MixtureDataset",
                     "args": {
                         "part": "train-clean-100-mixed",
-                        "cut_mix": 120000
+                        "cut_mix": 60000
                     }
                 }
             ]
@@ -96,9 +96,8 @@
         }
     },
     "trainer": {
-        "accumulation_steps": 2,
         "epochs": 3,
-        "iters_to_accumulate": 1,
+        "iters_to_accumulate": 2,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,

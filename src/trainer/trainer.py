@@ -46,7 +46,7 @@ class Trainer(BaseTrainer):
         self.lr_scheduler = lr_scheduler
         self.log_step = 100
 
-        self.accumulation_steps = config["trainer"].get("accumulation_steps", 1)
+        self.iters_to_accumulate = config["trainer"].get("iters_to_accumulate", 1)
         self.scaler = torch.cuda.amp.GradScaler()
 
         self.train_metrics = MetricTracker("loss", "grad norm", *[m.name for m in self.metrics if not m.skip_on_train], writer=self.writer)
@@ -73,17 +73,17 @@ class Trainer(BaseTrainer):
             outputs = self.model(**batch)
             batch.update(outputs)
             if is_train:
-                batch["loss"] = self.criterion(**batch) / self.accumulation_steps
+                batch["loss"] = self.criterion(**batch) / self.iters_to_accumulate
         if is_train:
             self.scaler.scale(batch["loss"]).backward()
-            print(batch_idx)
-            if (batch_idx + 1) % self.accumulation_steps == 0 or (batch_idx + 1) == self.len_epoch:
-                print("!!!!")
+
+            if (batch_idx + 1) % self.iters_to_accumulate == 0 or (batch_idx + 1) == self.len_epoch:
                 self.scaler.unscale_(self.optimizer)
                 self._clip_grad_norm()
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
                 self.optimizer.zero_grad()
+                self.train_metrics.update("grad norm", self.get_grad_norm())
 
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
@@ -229,7 +229,6 @@ class Trainer(BaseTrainer):
                     continue
                 else:
                     raise e
-            self.train_metrics.update("grad norm", self.get_grad_norm())
             if batch_idx % self.log_step == 0:
                 self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
                 self.logger.debug("Train Epoch: {} {} Loss: {:.6f}".format(epoch, self._progress(batch_idx), batch["loss"].item()))
