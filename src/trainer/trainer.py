@@ -70,7 +70,7 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
-
+        print(batch["y_wav"].shape)
         with torch.autocast(device_type=self.device.type, dtype=torch.float16):
             outputs = self.model(**batch)
             batch.update(outputs)
@@ -127,9 +127,6 @@ class Trainer(BaseTrainer):
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
 
-        # add histogram of model parameters to the tensorboard
-        # for name, p in self.model.named_parameters():
-        #     self.writer.add_histogram(name, p, bins="auto")
         return self.evaluation_metrics.result()
 
     def _progress(self, batch_idx):
