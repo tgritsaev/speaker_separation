@@ -8,13 +8,9 @@ from tqdm import tqdm
 import src.model as module_model
 import src.metric as module_metric
 from src.trainer import Trainer
-from src.utils import ROOT_PATH, MetricTracker
+from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
-
-
-DEFAULT_DIR = ROOT_PATH / "test_model"
-DEFAULT_CONFIG_PATH = DEFAULT_DIR / "config.json"
 
 
 def main(config):
@@ -23,19 +19,16 @@ def main(config):
     # define cpu or gpu if possible
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # text_encoder
-    text_encoder = config.get_text_encoder()
-
     # setup data_loader instances
-    dataloaders = get_dataloaders(config, text_encoder)
+    dataloaders = get_dataloaders(config)
 
-    def load_model(arch, checkpoint_name):
+    def load_model(arch, checkpoint):
         # build ss_model architecture
         model = config.init_obj(config[arch], module_model, n_class=len(text_encoder))
         logger.info(model)
 
         logger.info("Loading checkpoint...")
-        checkpoint = torch.load(DEFAULT_DIR / checkpoint_name, map_location=device)
+        checkpoint = torch.load(checkpoint, map_location=device)
         state_dict = checkpoint["state_dict"]
         if config["n_gpu"] > 1:
             model = torch.nn.DataParallel(model)
@@ -47,8 +40,11 @@ def main(config):
         model.eval()
         return model
 
-    ss_model = load_model("ss_arch", "speech_separation.pth")
-    asr_model = load_model("asr_arch", "audio_speech_recognition.pth")
+    ss_model = load_model("ss_arch", config.ss_checkpoint)
+    if config.asr_checkpoint:
+        # text_encoder
+        text_encoder = config.get_text_encoder()
+        asr_model = load_model("asr_arch", config.asr_checkpoint)
 
     metrics = [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
@@ -68,12 +64,31 @@ def main(config):
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description="PyTorch Template")
+    # args.add_argument(
+    #     "-o",
+    #     "--output",
+    #     default="output.json",
+    #     type=str,
+    #     help="File to write results (.json)",
+    # )
     args.add_argument(
-        "-o",
-        "--output",
-        default="output.json",
+        "-c",
+        "--config",
+        default="test_model/config.json",
         type=str,
-        help="File to write results (.json)",
+        help="Path to config",
+    )
+    args.add_argument(
+        "--ss_checkpoint",
+        default="test_model/ss_checkpoint.pth",
+        type=str,
+        help="Path to speech separation checkpoint",
+    )
+    args.add_argument(
+        "--asr_checkpoint",
+        default=None,
+        type=str,
+        help="Path to audio speech recognition checkpoint",
     )
     args.add_argument(
         "-j",
@@ -84,7 +99,7 @@ if __name__ == "__main__":
     )
     args = args.parse_args()
 
-    with Path(DEFAULT_CONFIG_PATH).open() as f:
+    with Path(args.config).open() as f:
         config = ConfigParser(json.load(f))
 
     # if `--test-data-folder` was provided, set it as a default test set

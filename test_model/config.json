@@ -1,0 +1,49 @@
+{
+    "name": "one_batch_test",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {},
+        "log_spec": true
+    },
+    "arch": {
+        "type": "SpExPlusModel",
+        "args": {
+            "L1": 20, 
+            "L2": 80, 
+            "L3": 160, 
+            "N": 256, 
+            "ResNetBlock_cnt": 3,
+            "TCN_cnt": 8
+        }
+    },
+    "data": {
+        "test": {
+            "batch_size": 1,
+            "num_workers": 1,
+            "datasets": [
+                {
+                    "type": "MixtureDataset",
+                    "args": {
+                        "part": "test-clean-mixed",
+                        "limit": 1000
+                    }
+                }
+            ]
+        }
+    },
+    "metrics": [
+        {
+            "type": "PESQMetric",
+            "args": {
+                "name": "PESQ"
+            }
+        },
+        {
+            "type": "SISDRMetric",
+            "args": {
+                "name": "SI-SDR"
+            }
+        }
+    ]
+}
