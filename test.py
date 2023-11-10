@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from tqdm import tqdm
 
+import numpy as np
 import torch
 import librosa
 
@@ -20,7 +21,7 @@ def vad_merge(w, top_db=20):
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e])
-    return torch.concatenate(temp, axis=None)
+    return torch.from_numpy(np.concatenate(temp.numpy(), axis=None))
 
 
 def main(config, args):
