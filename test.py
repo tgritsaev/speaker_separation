@@ -13,7 +13,7 @@ from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
 
 
-def main(config):
+def main(config, args):
     logger = config.get_logger("test")
 
     # define cpu or gpu if possible
