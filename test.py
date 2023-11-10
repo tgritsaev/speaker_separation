@@ -22,6 +22,7 @@ def vad_merge(w, top_db=20):
     for s, e in intervals:
         temp.append(w[s:e].squeeze())
         print(temp[-1].shape)
+    print(temp[0])
     return torch.concatenate(temp)
 
 
