@@ -128,4 +128,4 @@ if __name__ == "__main__":
             }
         }
 
-    main(config, args.output)
+    main(config)
