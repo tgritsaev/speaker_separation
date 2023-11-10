@@ -52,10 +52,27 @@ def main(config, args):
     metrics = [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
+    def process_batch(self, batch, metrics: MetricTracker):
+        batch = self.move_batch_to_device(batch, self.device)
+
+        outputs = ss_model(**batch)
+        batch.update(outputs)
+
+        wavs = batch["s1"]
+        normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
+        for i in range(wavs.shape[0]):
+            tensor_wav = torch.nan_to_num(wavs[i], nan=0)
+            normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
+        batch.update({"normalized_s": normalized_s})
+
+        for metric in self.metrics:
+            metrics.update(metric.name, metric(**batch))
+        return batch
+
     with torch.no_grad():
         for _, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
-            output = ss_model.process_batch(**batch, is_train=False, batch_idx=0, metrics=metrics_tracker)
+            process_batch(**batch, metrics=metrics_tracker)
 
     for metric in metrics:
         line = f"{metric.name}: {metric.avg()}"
