@@ -19,15 +19,9 @@ from src.utils.parse_config import ConfigParser
 def vad_merge(w, top_db=25):
     intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
     if len(intervals) > 1:
-        print("begin")
-        print(intervals)
-        print(torch.isnan(w).any())
         for i in range(1, len(intervals)):
             left, right = intervals[i - 1, 0], intervals[i, 1]
             w[left:right] = 0
-        print(w.shape)
-        print(torch.isnan(w).any())
-        print("end")
     return w
 
 
