@@ -4,7 +4,6 @@ from pathlib import Path
 from tqdm import tqdm
 
 import torch
-import numpy as np
 import librosa
 
 import src.model as ss_module_model
@@ -21,7 +20,7 @@ def vad_merge(w, top_db=20):
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e])
-    return np.concatenate(temp, axis=None)
+    return torch.concatenate(temp, axis=None)
 
 
 def main(config, args):
