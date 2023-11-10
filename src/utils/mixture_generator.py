@@ -22,6 +22,7 @@ def vad_merge(w, top_db):
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e].squeeze())
+        print(temp.shape)
     return np.concatenate(temp, axis=None)
 
 
