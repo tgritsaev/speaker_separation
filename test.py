@@ -22,7 +22,7 @@ def vad_merge(w, top_db=25):
         for i in range(1, len(intervals)):
             left, right = intervals[i - 1, 0], intervals[i, 1]
             w[left:right] = 0
-    return torch.nan_to_num(w, nan=0)
+    return w
 
 
 def main(config, args):
@@ -76,7 +76,7 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-            batch.update({"normalized_s": vad_merge(normalized_s).to(device).to(torch.float32)})
+            batch.update({"normalized_s": torch.nan_to_num(vad_merge(normalized_s).to(device).to(torch.float32), nan=0)})
 
             if args.asr_checkpoint is not None:
                 spectrogram = dataloader.dataset.process_wave(normalized_s)
