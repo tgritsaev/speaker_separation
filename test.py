@@ -9,7 +9,6 @@ import src.model as ss_module_model
 import hw_asr.model as asr_module_model
 import src.metric as module_metric
 from src.trainer import Trainer
-from src.base.base_dataset import BaseDataset
 from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
