@@ -44,7 +44,7 @@ def main(config, args):
     if args.asr_checkpoint is not None:
         # text_encoder
         text_encoder = config.get_text_encoder()
-        asr_model = load_model("asr_arch", config.asr_checkpoint)
+        asr_model = load_model("asr_arch", args.asr_checkpoint)
 
     metrics = [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
