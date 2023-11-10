@@ -55,10 +55,7 @@ def main(config, args):
     with torch.no_grad():
         for _, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
-            output = ss_model(**batch)
-            batch.update(output)
-            for metric in metrics:
-                metrics_tracker.update(metric.name, metric(**batch))
+            output = ss_model.process_batch(**batch, is_train=False, batch_idx=0, metrics=metrics_tracker)
 
     for metric in metrics:
         line = f"{metric.name}: {metric.avg()}"
