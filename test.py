@@ -100,7 +100,7 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     with Path(args.config).open() as f:
-        config = ConfigParser(json.load(f))
+        config = json.load(f)
 
     # if `--test-data-folder` was provided, set it as a default test set
     if args.test_data_folder is not None:
@@ -122,4 +122,4 @@ if __name__ == "__main__":
             }
         }
 
-    main(config, args.output)
+    main(config, args)
