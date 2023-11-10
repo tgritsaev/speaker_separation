@@ -70,7 +70,8 @@ def main(config, args):
                 metrics_tracker.update(metric.name, metric(**batch))
 
     for metric in metrics:
-        line = f"{metric.name}: {metric.avg()}"
+        name = metric.name
+        line = f"{name}: {metrics_tracker.avg(name)}"
         logger.info(line)
 
 
