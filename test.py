@@ -76,7 +76,7 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-            batch.update({"normalized_s": vad_merge(normalized_s).to(device)})
+            batch.update({"normalized_s": vad_merge(normalized_s).to(device).to(torch.float32)})
 
             if args.asr_checkpoint is not None:
                 spectrogram = dataloader.dataset.process_wave(normalized_s)
