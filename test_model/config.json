@@ -32,7 +32,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "part": "test-clean-mixed",
-                        "limit": 10
+                        "limit": 1000
                     }
                 }
             ]
