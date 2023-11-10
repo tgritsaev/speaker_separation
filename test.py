@@ -17,7 +17,8 @@ from src.utils.parse_config import ConfigParser
 
 
 def vad_merge(w, top_db=20):
-    intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
+    intervals = librosa.effects.split(w, top_db=top_db)
+    print(intervals)
     for i in range(1, len(intervals)):
         left, right = intervals[i - 1, 0], intervals[i, 1]
         w[left:right] = 0
@@ -75,7 +76,6 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-            print(vad_merge(normalized_s).shape)
             batch.update({"normalized_s": vad_merge(normalized_s).to(device)})
 
             if args.asr_checkpoint is not None:
