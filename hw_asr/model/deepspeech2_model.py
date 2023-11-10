@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from src.base import BaseModel
+from hw_asr.base import BaseModel
 
 
 class RNNwBatchNorm(nn.Module):
@@ -27,15 +27,17 @@ class RNNwBatchNorm(nn.Module):
 class DeepSpeech2Model(BaseModel):
     def __init__(self, n_feats, n_rnn_layers, rnn_hidden_size, rnn_dropout, n_class):
         assert n_rnn_layers >= 1
-        super().__init__()
+        super().__init__(n_feats, n_class)
 
         self.conv = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, padding=(20, 5), kernel_size=(41, 11), stride=(2, 2)),
             nn.BatchNorm2d(32),
             nn.ReLU(),
+
             nn.Conv2d(in_channels=32, out_channels=32, padding=(10, 5), kernel_size=(21, 11), stride=(2, 2)),
             nn.BatchNorm2d(32),
             nn.ReLU(),
+
             nn.Conv2d(in_channels=32, out_channels=96, padding=(10, 5), kernel_size=(21, 11), stride=(2, 1)),
             nn.BatchNorm2d(96),
             nn.ReLU(),

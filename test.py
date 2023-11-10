@@ -5,7 +5,8 @@ from pathlib import Path
 import torch
 from tqdm import tqdm
 
-import src.model as module_model
+import src.model as ss_module_model
+import hw_asr.model as asr_module_model
 import src.metric as module_metric
 from src.trainer import Trainer
 from src.base.base_dataset import BaseDataset
@@ -26,9 +27,9 @@ def main(config, args):
     def load_model(arch, checkpoint):
         # build model architecture
         if "ss" in arch:
-            model = config.init_obj(config[arch], module_model)
+            model = config.init_obj(config[arch], ss_module_model)
         else:
-            model = config.init_obj(config[arch], module_model, n_class=len(text_encoder))
+            model = config.init_obj(config[arch], asr_module_model, n_class=len(text_encoder))
         logger.info(model)
 
         logger.info("Loading checkpoint...")
