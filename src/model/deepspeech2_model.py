@@ -27,7 +27,7 @@ class RNNwBatchNorm(nn.Module):
 class DeepSpeech2Model(BaseModel):
     def __init__(self, n_feats, n_rnn_layers, rnn_hidden_size, rnn_dropout, n_class):
         assert n_rnn_layers >= 1
-        super().__init__(n_feats, n_class)
+        super().__init__()
 
         self.conv = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, padding=(20, 5), kernel_size=(41, 11), stride=(2, 2)),
