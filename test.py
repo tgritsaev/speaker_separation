@@ -17,13 +17,11 @@ from src.utils.parse_config import ConfigParser
 
 
 def vad_merge(w, top_db=20):
-    intervals = librosa.effects.split(w.cpu(), top_db=top_db)
+    intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e].squeeze())
-        print(temp[-1].shape)
-    print(temp[0])
-    return torch.concatenate(temp)
+    return torch.from_numpy(np.concatenate(temp, axis=None))
 
 
 def main(config, args):
