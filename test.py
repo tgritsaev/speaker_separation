@@ -8,6 +8,7 @@ from tqdm import tqdm
 import src.model as module_model
 import src.metric as module_metric
 from src.trainer import Trainer
+from src.base.base_dataset import BaseDataset
 from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
@@ -20,7 +21,7 @@ def main(config, args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # setup data_loader instances
-    dataloaders = get_dataloaders(config)
+    dataloader = get_dataloaders(config)["test"]
 
     def load_model(arch, checkpoint):
         # build model architecture
@@ -53,7 +54,7 @@ def main(config, args):
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
     with torch.no_grad():
-        for _, batch in enumerate(tqdm(dataloaders["test"])):
+        for _, batch in enumerate(tqdm(dataloader)):
             batch = Trainer.move_batch_to_device(batch, device)
 
             outputs = ss_model(**batch)
@@ -65,6 +66,13 @@ def main(config, args):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
             batch.update({"normalized_s": normalized_s})
+
+            if args.asr_checkpoint is not None:
+                spectrogram = dataloader.dataset.process_wave(normalized_s)
+                batch.update({"spectrogram": spectrogram.to(device)})
+                print(spectrogram.shape)
+                batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
+                logits = asr_model(**batch)
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))

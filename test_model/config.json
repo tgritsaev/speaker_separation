@@ -23,6 +23,15 @@
             "speakers_cnt": 251
         }
     },
+    "asr_arch": {
+        "type": "DeepSpeech2Model",
+        "args": {
+            "n_feats": 256,
+            "n_rnn_layers": 5,
+            "rnn_hidden_size": 512,
+            "rnn_dropout": 0.2
+        }
+    },
     "data": {
         "test": {
             "batch_size": 1,
