@@ -23,8 +23,11 @@ def main(config, args):
     dataloaders = get_dataloaders(config)
 
     def load_model(arch, checkpoint):
-        # build ss_model architecture
-        model = config.init_obj(config[arch], module_model, n_class=len(text_encoder))
+        # build model architecture
+        if "ss" in arch:
+            model = config.init_obj(config[arch], module_model)
+        else:
+            model = config.init_obj(config[arch], module_model, n_class=len(text_encoder))
         logger.info(model)
 
         logger.info("Loading checkpoint...")
