@@ -16,7 +16,7 @@ from src.utils.parse_config import ConfigParser
 
 
 def vad_merge(w, top_db=20):
-    intervals = librosa.effects.split(w, top_db=top_db)
+    intervals = librosa.effects.split(w.cpu(), top_db=top_db)
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e])
@@ -74,7 +74,7 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-            batch.update({"normalized_s": vad_merge(normalized_s)})
+            batch.update({"normalized_s": vad_merge(normalized_s).to(device)})
 
             if args.asr_checkpoint is not None:
                 spectrogram = dataloader.dataset.process_wave(normalized_s)
