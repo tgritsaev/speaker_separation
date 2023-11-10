@@ -21,6 +21,7 @@ def vad_merge(w, top_db=20):
     temp = list()
     for s, e in intervals:
         temp.append(w[s:e].squeeze())
+        print(temp[-1].shape)
     return torch.concatenate(temp)
 
 
@@ -75,6 +76,7 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
+            print(vad_merge(normalized_s).shape)
             batch.update({"normalized_s": vad_merge(normalized_s).to(device)})
 
             if args.asr_checkpoint is not None:
