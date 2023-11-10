@@ -1,9 +1,11 @@
 import argparse
 import json
 from pathlib import Path
+from tqdm import tqdm
 
 import torch
-from tqdm import tqdm
+import numpy as np
+import librosa
 
 import src.model as ss_module_model
 import hw_asr.model as asr_module_model
@@ -12,6 +14,14 @@ from src.trainer import Trainer
 from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
+
+
+def vad_merge(w, top_db=20):
+    intervals = librosa.effects.split(w, top_db=top_db)
+    temp = list()
+    for s, e in intervals:
+        temp.append(w[s:e])
+    return np.concatenate(temp, axis=None)
 
 
 def main(config, args):
@@ -65,7 +75,7 @@ def main(config, args):
             for i in range(wavs.shape[0]):
                 tensor_wav = torch.nan_to_num(wavs[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
-            batch.update({"normalized_s": normalized_s})
+            batch.update({"normalized_s": vad_merge(normalized_s)})
 
             if args.asr_checkpoint is not None:
                 spectrogram = dataloader.dataset.process_wave(normalized_s)
