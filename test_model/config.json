@@ -27,7 +27,7 @@
         "type": "DeepSpeech2Model",
         "args": {
             "n_feats": 256,
-            "n_rnn_layers": 5,
+            "n_rnn_layers": 6,
             "rnn_hidden_size": 512,
             "rnn_dropout": 0.2
         }

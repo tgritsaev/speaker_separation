@@ -13,4 +13,4 @@ wandb
 pyctcdecode
 torchaudio==2.1.0
 pillow
-kenlm
+pyctcdecode
