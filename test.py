@@ -67,7 +67,7 @@ def main(config, args):
             batch.update({"normalized_s": normalized_s})
 
             for metric in metrics:
-                metrics.update(metric.name, metric(**batch))
+                metrics_tracker.update(metric.name, metric(**batch))
 
     for metric in metrics:
         line = f"{metric.name}: {metric.avg()}"
