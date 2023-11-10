@@ -16,7 +16,7 @@ from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
 
 
-def vad_merge(w, top_db=23):
+def vad_merge(w, top_db=25):
     intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
     if len(intervals) > 1:
         for i in range(1, len(intervals)):
