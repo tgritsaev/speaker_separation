@@ -22,7 +22,7 @@ def vad_merge(w, top_db=20):
         for i in range(1, len(intervals)):
             left, right = intervals[i - 1, 0], intervals[i, 1]
             w[left:right] = 0
-    return w
+    return torch.nan_to_num(w, nan=0)
 
 
 def main(config, args):
