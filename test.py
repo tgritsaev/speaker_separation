@@ -20,7 +20,7 @@ def vad_merge(w, top_db=20):
     intervals = librosa.effects.split(w.cpu(), top_db=top_db)
     temp = list()
     for s, e in intervals:
-        temp.append(w[s:e])
+        temp.append(w[s:e].squeeze())
     return torch.concatenate(temp).unsqueeze(0)
 
 
