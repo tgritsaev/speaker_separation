@@ -91,6 +91,12 @@ if __name__ == "__main__":
         help="Path to audio speech recognition checkpoint",
     )
     args.add_argument(
+        "--test_data_folder",
+        default=None,
+        type=str,
+        help="Path to test data folder",
+    )
+    args.add_argument(
         "-j",
         "--jobs",
         default=1,
