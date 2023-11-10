@@ -21,7 +21,7 @@ def vad_merge(w, top_db):
     intervals = librosa.effects.split(w, top_db=top_db)
     temp = list()
     for s, e in intervals:
-        temp.append(w[s:e])
+        temp.append(w[s:e].squeeze())
     return np.concatenate(temp, axis=None)
 
 
