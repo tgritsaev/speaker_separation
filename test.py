@@ -13,7 +13,7 @@ from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
 
 
-def main(config):
+def main(config, args):
     logger = config.get_logger("test")
 
     # define cpu or gpu if possible
@@ -40,8 +40,8 @@ def main(config):
         model.eval()
         return model
 
-    ss_model = load_model("ss_arch", config.ss_checkpoint)
-    if config.asr_checkpoint:
+    ss_model = load_model("ss_arch", args.ss_checkpoint)
+    if args.asr_checkpoint is not None:
         # text_encoder
         text_encoder = config.get_text_encoder()
         asr_model = load_model("asr_arch", config.asr_checkpoint)
@@ -128,4 +128,4 @@ if __name__ == "__main__":
             }
         }
 
-    main(config)
+    main(config, args)
