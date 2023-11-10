@@ -1,12 +1,17 @@
 {
-    "name": "one_batch_test",
+    "name": "test",
     "n_gpu": 1,
     "preprocessing": {
         "sr": 16000,
         "spectrogram": {},
         "log_spec": true
     },
-    "arch": {
+    "augmentations": {
+        "random_apply_p": 0.5,
+        "wave": [],
+        "spectrogram": []
+    },
+    "ss_arch": {
         "type": "SpExPlusModel",
         "args": {
             "L1": 20, 
@@ -45,5 +50,28 @@
                 "name": "SI-SDR"
             }
         }
-    ]
+    ],
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 10000,
+            "epochs": 4,
+            "anneal_strategy": "cos",
+            "max_lr": 1e-3,
+            "pct_start": 0.2
+        }
+    },
+    "trainer": {
+        "epochs": 4,
+        "iters_to_accumulate": 2,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 100,
+        "visualize": "wandb",
+        "wandb_project": "dla2_ss",
+        "len_epoch": 10000,
+        "grad_norm_clip": 25
+    }
 }

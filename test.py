@@ -13,14 +13,14 @@ from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
 
 
-def main(config, args):
+def main(config):
     logger = config.get_logger("test")
 
     # define cpu or gpu if possible
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # setup data_loader instances
-    dataloaders = get_dataloaders(config)
+    dataloaders = get_dataloaders(config, text_encoder)
 
     def load_model(arch, checkpoint):
         # build ss_model architecture
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     with Path(args.config).open() as f:
-        config = json.load(f)
+        config = ConfigParser(json.load(f))
 
     # if `--test-data-folder` was provided, set it as a default test set
     if args.test_data_folder is not None:
@@ -128,4 +128,4 @@ if __name__ == "__main__":
             }
         }
 
-    main(config, args)
+    main(config, args.output)
