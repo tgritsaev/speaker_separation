@@ -19,6 +19,7 @@ from src.utils.parse_config import ConfigParser
 def vad_merge(w, top_db=20):
     intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
     temp = list()
+    print(intervals)
     for s, e in intervals:
         temp.append(w[s:e].squeeze())
     print(temp[0])
