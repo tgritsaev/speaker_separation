@@ -89,17 +89,6 @@ class Trainer(BaseTrainer):
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
 
-        # outputs = self.model(**batch)
-        # batch.update(outputs)
-        # if is_train:
-        #     batch["loss"] = self.criterion(**batch)
-        #     self._clip_grad_norm()
-        #     batch["loss"].backward()
-        #     self.optimizer.step()
-        #     if self.lr_scheduler is not None:
-        #         self.lr_scheduler.step()
-        #     metrics.update("loss", batch["loss"].item())
-
         wavs = batch["s1"]
         normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
         for i in range(wavs.shape[0]):
@@ -112,7 +101,7 @@ class Trainer(BaseTrainer):
             #     continue
             # if is_train and metric.skip_on_train:
             #     continue
-            if metric.name == "PESQ":
+            if is_train and metric.name == "PESQ":
                 continue
             metrics.update(metric.name, metric(**batch))
         return batch

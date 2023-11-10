@@ -51,7 +51,10 @@ class BaseTrainer:
         self.writer = get_visualizer(config, self.logger, cfg_trainer["visualize"])
 
         if config.resume is not None:
-            self._load_model(config.resume)
+            if config.optimizer:
+                self._resume_checkpoint(config.resume)
+            else:
+                self._load_model(config.resume)
 
     @abstractmethod
     def _train_epoch(self, epoch):
@@ -61,69 +64,6 @@ class BaseTrainer:
         :param epoch: Current epoch number
         """
         raise NotImplementedError()
-
-    def train(self):
-        try:
-            self._train_process()
-        except KeyboardInterrupt as e:
-            self.logger.info("Saving model on keyboard interrupt")
-            self._save_checkpoint(self._last_epoch, save_best=False)
-            raise e
-
-    def _train_process(self):
-        """
-        Full training logic
-        """
-        not_improved_count = 0
-        for epoch in range(self.start_epoch, self.epochs + 1):
-            self._last_epoch = epoch
-            result = self._train_epoch(epoch)
-
-            # save logged informations into log dict
-            log = {"epoch": epoch}
-            log.update(result)
-
-            # print logged informations to the screen
-            for key, value in log.items():
-                self.logger.info("    {:15s}: {}".format(str(key), value))
-
-            # evaluate model performance according to configured metric,
-            # save best checkpoint as model_best
-            best = False
-            if self.mnt_mode != "off":
-                try:
-                    # check whether model performance improved or not,
-                    # according to specified metric(mnt_metric)
-                    if self.mnt_mode == "min":
-                        improved = log[self.mnt_metric] <= self.mnt_best
-                    elif self.mnt_mode == "max":
-                        improved = log[self.mnt_metric] >= self.mnt_best
-                    else:
-                        improved = False
-                except KeyError:
-                    self.logger.warning(
-                        "Warning: Metric '{}' is not found. "
-                        "Model performance monitoring is disabled.".format(self.mnt_metric)
-                    )
-                    self.mnt_mode = "off"
-                    improved = False
-
-                if improved:
-                    self.mnt_best = log[self.mnt_metric]
-                    not_improved_count = 0
-                    best = True
-                else:
-                    not_improved_count += 1
-
-                if not_improved_count > self.early_stop:
-                    self.logger.info(
-                        "Validation performance didn't improve for {} epochs. "
-                        "Training stops.".format(self.early_stop)
-                    )
-                    break
-
-            if epoch % self.save_period == 0 or best:
-                self._save_checkpoint(epoch, save_best=best, only_best=True)
 
     def _save_checkpoint(self, epoch, save_best=False, only_best=False):
         """
@@ -184,15 +124,72 @@ class BaseTrainer:
         self.model.load_state_dict(checkpoint["state_dict"])
 
         # load optimizer state from checkpoint only when optimizer type is not changed.
-        if (
-            checkpoint["config"]["optimizer"] != self.config["optimizer"]
-            or checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]
-        ):
-            self.logger.warning(
-                "Warning: Optimizer or lr_scheduler given in config file is different "
-                "from that of checkpoint. Optimizer parameters not being resumed."
-            )
-        else:
-            self.optimizer.load_state_dict(checkpoint["optimizer"])
+        if self.optimizer:
+            self.logger.info("Optimizer and lr_scheduler are loading...")
+            if checkpoint["config"]["optimizer"] != self.config["optimizer"] or checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]:
+                self.logger.warning(
+                    "Warning: Optimizer or lr_scheduler given in config file is different " "from that of checkpoint. Optimizer parameters not being resumed."
+                )
+            else:
+                self.optimizer.load_state_dict(checkpoint["optimizer"])
+                self.lr_scheduler.load_state_dict(checkpoint["lr_scheduler"])
+                self.logger.info("Optimizer and lr_scheduler have succesfully loaded.")
+
+    def _train_process(self):
+        """
+        Full training logic
+        """
+        not_improved_count = 0
+        for epoch in range(self.start_epoch, self.epochs + 1):
+            self._last_epoch = epoch
+            result = self._train_epoch(epoch)
+
+            # save logged informations into log dict
+            log = {"epoch": epoch}
+            log.update(result)
+
+            # print logged informations to the screen
+            for key, value in log.items():
+                self.logger.info("    {:15s}: {}".format(str(key), value))
+
+            # evaluate model performance according to configured metric,
+            # save best checkpoint as model_best
+            best = False
+            if self.mnt_mode != "off":
+                try:
+                    # check whether model performance improved or not,
+                    # according to specified metric(mnt_metric)
+                    if self.mnt_mode == "min":
+                        improved = log[self.mnt_metric] <= self.mnt_best
+                    elif self.mnt_mode == "max":
+                        improved = log[self.mnt_metric] >= self.mnt_best
+                    else:
+                        improved = False
+                except KeyError:
+                    self.logger.warning("Warning: Metric '{}' is not found. " "Model performance monitoring is disabled.".format(self.mnt_metric))
+                    self.mnt_mode = "off"
+                    improved = False
+
+                if improved:
+                    self.mnt_best = log[self.mnt_metric]
+                    not_improved_count = 0
+                    best = True
+                else:
+                    not_improved_count += 1
+
+                if not_improved_count > self.early_stop:
+                    self.logger.info("Validation performance didn't improve for {} epochs. " "Training stops.".format(self.early_stop))
+                    break
+
+            if epoch % self.save_period == 0 or best:
+                self._save_checkpoint(epoch, save_best=best, only_best=True)
 
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
+
+    def train(self):
+        try:
+            self._train_process()
+        except KeyboardInterrupt as e:
+            self.logger.info("Saving model on keyboard interrupt")
+            self._save_checkpoint(self._last_epoch, save_best=False)
+            raise e

@@ -33,10 +33,10 @@ def main(config: Dict, text_encoder: BaseTextEncoder):
             # wave_augs=wave_augs, spec_augs=spec_augs)
         assert len(index) > 0
 
-        logging.info(split + ": " + str(len(index)))
+        logging.info("Creating " + split + " starts: " + str(len(index)))
         mixture_generator = MixtureGenerator(index, **params["mixture_generator_init"])
         mixture_generator.generate_mixes(**params["mixture_generator_generate_mixes"])
-        logging.info("finished " + split)
+        logging.info("Creating " + split + " finished.")
 
 
 if __name__ == "__main__":

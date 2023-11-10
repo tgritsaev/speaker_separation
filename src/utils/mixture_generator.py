@@ -65,6 +65,7 @@ def create_mix(idx, triplet, snr_levels, out_dir, test=False, sr=16000, **kwargs
     ref_path = triplet["reference"]
     target_id = triplet["target_id"]
     noise_id = triplet["noise_id"]
+    text = triplet["text"]
 
     s1, _ = sf.read(os.path.join("", s1_path))
     s2, _ = sf.read(os.path.join("", s2_path))
@@ -95,9 +96,10 @@ def create_mix(idx, triplet, snr_levels, out_dir, test=False, sr=16000, **kwargs
     if len(ref) < sr:
         return
 
-    path_mix = os.path.join(out_dir, f"{target_id}_{noise_id}_" + "%06d" % idx + "-mixed.wav")
-    path_target = os.path.join(out_dir, f"{target_id}_{noise_id}_" + "%06d" % idx + "-target.wav")
-    path_ref = os.path.join(out_dir, f"{target_id}_{noise_id}_" + "%06d" % idx + "-ref.wav")
+    path_suffix = f"{target_id}_{noise_id}_" + "%06d" % idx
+    path_mix = os.path.join(out_dir, path_suffix + "-mixed.wav")
+    path_target = os.path.join(out_dir, path_suffix + "-target.wav")
+    path_ref = os.path.join(out_dir, path_suffix + "-ref.wav")
 
     snr = np.random.choice(snr_levels, 1).item()
 
@@ -132,10 +134,13 @@ def create_mix(idx, triplet, snr_levels, out_dir, test=False, sr=16000, **kwargs
         sf.write(path_target, s1, sr)
         sf.write(path_ref, ref, sr)
 
+    with open(os.path.join(out_dir, "0_texts.txt"), "a") as fout:
+        fout.write(path_suffix + ": " + text + "\n")
+
 
 class MixtureGenerator:
-    def __init__(self, speakers_files, test, out_folder="./", nfiles=4096, randomState=42):
-        self.speakers_files = speakers_files  # list of SpeakerFiles for every speaker_id
+    def __init__(self, index, test, out_folder="./", nfiles=4096, randomState=42):
+        self.index = index
         self.nfiles = nfiles
         self.randomState = randomState
         self.out_folder = out_folder
@@ -145,12 +150,12 @@ class MixtureGenerator:
             os.makedirs(self.out_folder)
 
     def generate_triplets(self):
-        all_triplets = {"reference": [], "target": [], "noise": [], "target_id": [], "noise_id": []}
+        all_triplets = {"reference": [], "target": [], "noise": [], "target_id": [], "noise_id": [], "text": []}
         for _ in tqdm(range(self.nfiles)):
-            sample1, sample2 = random.sample(self.speakers_files, 2)
+            sample1, sample2 = random.sample(self.index, 2)
             wav_path1, wav_path2 = sample1["path"], sample2["path"]
             while Path(wav_path1).parent.parent == Path(wav_path2).parent.parent:
-                sample1, sample2 = random.sample(self.speakers_files, 2)
+                sample1, sample2 = random.sample(self.index, 2)
                 wav_path1, wav_path2 = sample1["path"], sample2["path"]
             root1, root2 = Path(wav_path1).parent.parent, Path(wav_path2).parent.parent
 
@@ -162,29 +167,30 @@ class MixtureGenerator:
             all_triplets["noise"].append(noise)
             all_triplets["target_id"].append(os.path.basename(root1))
             all_triplets["noise_id"].append(os.path.basename(root2))
+            all_triplets["text"].append(sample1["text"])
 
         return all_triplets
 
-    def triplet_generator(self, target_speaker, noise_speaker, number_of_triplets):
-        max_num_triplets = min(len(target_speaker.files), len(noise_speaker.files))
-        number_of_triplets = min(max_num_triplets, number_of_triplets)
+    # def triplet_generator(self, target_speaker, noise_speaker, number_of_triplets):
+    #     max_num_triplets = min(len(target_speaker.files), len(noise_speaker.files))
+    #     number_of_triplets = min(max_num_triplets, number_of_triplets)
 
-        target_samples = random.sample(target_speaker.files, k=number_of_triplets)
-        reference_samples = random.sample(target_speaker.files, k=number_of_triplets)
-        noise_samples = random.sample(noise_speaker.files, k=number_of_triplets)
+    #     target_samples = random.sample(target_speaker.files, k=number_of_triplets)
+    #     reference_samples = random.sample(target_speaker.files, k=number_of_triplets)
+    #     noise_samples = random.sample(noise_speaker.files, k=number_of_triplets)
 
-        triplets = {
-            "reference": [],
-            "target": [],
-            "noise": [],
-            "target_id": [target_speaker.id] * number_of_triplets,
-            "noise_id": [noise_speaker.id] * number_of_triplets,
-        }
-        triplets["target"] += target_samples
-        triplets["reference"] += reference_samples
-        triplets["noise"] += noise_samples
+    #     triplets = {
+    #         "reference": [],
+    #         "target": [],
+    #         "noise": [],
+    #         "target_id": [target_speaker.id] * number_of_triplets,
+    #         "noise_id": [noise_speaker.id] * number_of_triplets,
+    #     }
+    #     triplets["target"] += target_samples
+    #     triplets["reference"] += reference_samples
+    #     triplets["noise"] += noise_samples
 
-        return triplets
+    #     return triplets
 
     def generate_mixes(self, snr_levels=[0], num_workers=4, update_steps=100, **kwargs):
         triplets = self.generate_triplets()
@@ -199,6 +205,7 @@ class MixtureGenerator:
                     "noise": triplets["noise"][i],
                     "target_id": triplets["target_id"][i],
                     "noise_id": triplets["noise_id"][i],
+                    "text": triplets["text"][i],
                 }
                 futures.append(pool.submit(create_mix, i, triplet, snr_levels, self.out_folder, test=self.test, **kwargs))
 

@@ -81,6 +81,13 @@ if __name__ == "__main__":
         help="path to latest checkpoint (default: None)",
     )
     args.add_argument(
+        "-o",
+        "--optimizer",
+        default=False,
+        type=bool,
+        help="load previous optimizer",
+    )
+    args.add_argument(
         "-d",
         "--device",
         default=None,
