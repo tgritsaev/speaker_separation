@@ -56,7 +56,7 @@ def main(config, args):
     for metric_dict in config["metrics"]:
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder))
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
 
