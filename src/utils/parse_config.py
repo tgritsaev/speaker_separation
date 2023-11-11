@@ -101,7 +101,8 @@ class ConfigParser:
         """
         if "module" in obj_dict:
             default_module = importlib.import_module(obj_dict["module"])
-
+        print(args)
+        print(kwargs)
         module_name = obj_dict["type"]
         module_args = dict(obj_dict["args"])
         assert all([k not in module_args for k in kwargs]), "Overwriting kwargs given in config file is not allowed"
@@ -135,7 +136,6 @@ class ConfigParser:
         return logger
 
     def get_text_encoder(self) -> BaseTextEncoder:
-        print("!!")
         if self._text_encoder is None:
             if "text_encoder" not in self._config:
                 self._text_encoder = CTCCharTextEncoder()
@@ -143,7 +143,6 @@ class ConfigParser:
                 self._text_encoder = CTCCharTextEncoder(self._config["text_encoder"]["args"])
             else:
                 self._text_encoder = self.init_obj(self["text_encoder"], default_module=text_encoder_module)
-            print(self._text_encoder)
         return self._text_encoder
 
     # setting read-only attributes
