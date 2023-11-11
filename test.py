@@ -56,7 +56,6 @@ def main(config, args):
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
                 metric_name = metric_dict["args"]["name"]
-                print("!!!!!!!!", metric_name)
                 metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder, name=metric_name))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
@@ -82,9 +81,7 @@ def main(config, args):
                     _, spectrogram = dataloader.dataset.process_wave(wav.cpu())
                     batch["spectrogram"] = spectrogram.to(device)
                     batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
-
-                    batch[pref + "logits"] = asr_model(**batch)["logits"]
-                    batch[pref + "log_probs"] = F.log_softmax(batch["logits"], dim=-1)
+                    batch[pref + "log_probs"] = F.log_softmax(asr_model(**batch)["logits"], dim=-1)
 
                 insert_logits("pred", normalized_s)
                 insert_logits("target", batch["target_wav"])
