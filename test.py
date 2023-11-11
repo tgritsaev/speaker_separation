@@ -102,9 +102,9 @@ def main(config, args):
                 for left in range(0, cut_len, window_len):
                     segmented_batch = {}
                     right = left + window_len
-                    segmented_batch["x_wav"] = batch["y_wav"]
                     segmented_batch["y_wav"] = batch["y_wav"][0, left:right].unsqueeze(0).to(device)
-                    segmented_batch["x_wav_len"] = torch.Tensor([window_len]).to(device)
+                    segmented_batch["x_wav"] = batch["x_wav"]
+                    segmented_batch["x_wav_len"] = batch["x_wav_len"]
 
                     segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
