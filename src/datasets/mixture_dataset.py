@@ -42,7 +42,6 @@ class MixtureDataset(BaseDataset):
                 self.speaker_mapping[speaker_id] = speakers_cnt
                 speakers_cnt += 1
         self.speakers_cnt = speakers_cnt
-        print(self.speaker_mapping)
         logging.info(f"speakers mapping has finished, speakers_cnt: {speakers_cnt}")
 
     def __len__(self):

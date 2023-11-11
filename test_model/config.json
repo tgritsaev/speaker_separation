@@ -3,7 +3,12 @@
     "n_gpu": 1,
     "preprocessing": {
         "sr": 16000,
-        "spectrogram": {},
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {
+                "n_mels": 256
+            }
+        },
         "log_spec": true
     },
     "augmentations": {
