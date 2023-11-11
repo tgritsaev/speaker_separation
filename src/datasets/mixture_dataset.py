@@ -28,10 +28,9 @@ class MixtureDataset(BaseDataset):
     def _create_texts(self):
         self.id_to_text = {}
         with open(self.path / "0_texts.txt", "r") as fin:
-            id, text = fin.readline().split(": ")
-            print("!!", id, ":")
-            print("??", text)
-            self.id_to_text[id] = text
+            while line := fin.readline():
+                id, text = line.split(": ")
+                self.id_to_text[id] = text
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
