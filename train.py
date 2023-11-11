@@ -83,6 +83,7 @@ if __name__ == "__main__":
     args.add_argument(
         "-o",
         "--optimizer",
+        default="False",
         action="store_false",
         help="load previous optimizer",
     )
