@@ -137,16 +137,13 @@ class ConfigParser:
     def get_text_encoder(self) -> BaseTextEncoder:
         print("!!")
         if self._text_encoder is None:
-            print(self._config)
             if "text_encoder" not in self._config:
-                print("1111111")
                 self._text_encoder = CTCCharTextEncoder()
             elif self._config["text_encoder"] == "CTCCharTextEncoder":
-                print("222222222")
                 self._text_encoder = CTCCharTextEncoder(self._config["text_encoder"]["args"])
             else:
-                print("333333333333")
                 self._text_encoder = self.init_obj(self["text_encoder"], default_module=text_encoder_module)
+            print(self._text_encoder)
         return self._text_encoder
 
     # setting read-only attributes
