@@ -66,13 +66,13 @@
         {
             "type": "ArgmaxWERMetric",
             "args": {
-                "name": "WER target"
+                "name": "WER"
             }
         },
         {
             "type": "ArgmaxCERMetric",
             "args": {
-                "name": "CER target"
+                "name": "CER"
             }
         }
     ],
