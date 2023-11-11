@@ -68,6 +68,18 @@
             "args": {
                 "name": "PESQ"
             }
+        },
+        {
+            "type": "SegmentedSISDRMetric",
+            "args": {
+                "name": "Segmented SI-SDR"
+            }
+        },
+        {
+            "type": "SegmentedPESQMetric",
+            "args": {
+                "name": "Segmented PESQ"
+            }
         }
     ],
     "lr_scheduler": {

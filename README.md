@@ -22,8 +22,8 @@ python create_dataset.py -c create_dataset.json
 python test.py
 ``` 
 2. Or you can specify paths and run `python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint`
-3. If you want to measure speech recognition model quality on my speech separation solution, use test_model/config_for_asr.json and run `python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
-4. If you want to test quality on segmented audio by 100ms length, run ``.
+3. If you want to measure speech recognition model quality on my speech separation solution, use test_model/asr_config.json and run `python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
+4. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run `python3 test.py -c test_model/segmentation_config.json -s window_len_in_seconds`.
 
 
 ## Credits

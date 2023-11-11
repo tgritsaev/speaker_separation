@@ -51,12 +51,15 @@ def main(config, args):
         text_encoder = config.get_text_encoder()
         asr_model = load_model("asr_arch", args.asr_checkpoint)
 
+    segmentation = False
     metrics = []
     for metric_dict in config["metrics"]:
-        if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
+        if "Segmented" in metric_dict["type"]:
+            segmentation = True
+            metrics.append(config.init_obj(metric_dict, module_metric))
+        elif "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                metric_name = metric_dict["args"]["name"]
-                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder, name=metric_name))
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
@@ -65,16 +68,18 @@ def main(config, args):
         for _, batch in enumerate(tqdm(dataloader)):
             batch = Trainer.move_batch_to_device(batch, device)
 
+            # basic metrics
             outputs = ss_model(**batch)
             batch.update(outputs)
 
-            wavs = batch["s1"]
-            normalized_s = torch.zeros_like(batch["s1"], device=wavs.device)
-            for i in range(wavs.shape[0]):
-                tensor_wav = torch.nan_to_num(wavs[i], nan=0)
+            wav = batch["s1"]
+            normalized_s = torch.zeros_like(batch["s1"], device=wav.device)
+            for i in range(wav.shape[0]):
+                tensor_wav = torch.nan_to_num(wav[i], nan=0)
                 normalized_s[i] = (20 * tensor_wav / tensor_wav.norm()).to(torch.float32)
             batch.update({"normalized_s": normalized_s})
 
+            # ASR
             if args.asr_checkpoint is not None:
 
                 def insert_logits(pref, wav):
@@ -82,10 +87,28 @@ def main(config, args):
                     batch["spectrogram"] = spectrogram.to(device)
                     batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
                     batch[pref + "log_probs"] = F.log_softmax(asr_model(**batch)["logits"], dim=-1)
-                    batch[pref + "lengths"] = [len(batch["text"][0])]
 
                 insert_logits("pred_", normalized_s)
                 insert_logits("target_", batch["target_wav"])
+                batch["lengths"] = [len(batch["text"][0])]
+
+            # Segmented
+            if segmentation:
+                assert dataloader.batch_size == 1, "Yoy can use only `batch_size=1`!"
+
+                window_len = int(args.second * config["preprocessing"]["sr"])
+                segmented_wavs = []
+                for left in range(0, len(wav), window_len):
+                    right = min(left + window_len, len(wav))
+                    segmented_batch = {}
+                    for key in ["x_wav", "y_wav"]:
+                        segmented_batch[key] = torch.Tensor([batch[key][0][left:right]]).to(device)
+                    segmented_batch["x_wav_length"] = torch.Tensor([right - left]).to(device)
+
+                    segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
+                    segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
+
+                batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
@@ -129,6 +152,13 @@ if __name__ == "__main__":
         default=None,
         type=str,
         help="Path to custom test data folder",
+    )
+    args.add_argument(
+        "-s",
+        "--second",
+        default=0.1,
+        type=float,
+        help="Window length in seconds for segmented speech separation",
     )
     args.add_argument(
         "-j",

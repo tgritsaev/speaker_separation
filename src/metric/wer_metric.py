@@ -14,14 +14,12 @@ class ArgmaxWERMetric(BaseMetric):
         self.text_encoder = text_encoder
         self.name = name
 
-    def __call__(self, pred_log_probs: Tensor, target_log_probs: Tensor, pred_lengths, target_lengths, text: List[str], **kwargs):
+    def __call__(self, pred_log_probs: Tensor, target_log_probs: Tensor, lengths, text: List[str], **kwargs):
         wers = []
         if "target" in self.name:
             predictions = torch.argmax(target_log_probs.cpu(), dim=-1).numpy()
-            lengths = pred_lengths
         else:
             predictions = torch.argmax(pred_log_probs.cpu(), dim=-1).numpy()
-            lengths = target_lengths
         for log_prob_vec, length, target_text in zip(predictions, lengths, text):
             target_text = BaseTextEncoder.normalize_text(target_text)
             if hasattr(self.text_encoder, "ctc_decode"):
