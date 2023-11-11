@@ -1,6 +1,10 @@
 {
     "name": "test",
     "n_gpu": 1,
+    "text_encoder": {
+        "type": "CTCCharTextEncoder",
+        "args": {}
+    },
     "preprocessing": {
         "sr": 16000,
         "spectrogram": {
