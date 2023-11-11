@@ -102,6 +102,7 @@ class ConfigParser:
         if "module" in obj_dict:
             default_module = importlib.import_module(obj_dict["module"])
         print(args)
+        print("!!!!!!")
         print(kwargs)
         module_name = obj_dict["type"]
         module_args = dict(obj_dict["args"])
