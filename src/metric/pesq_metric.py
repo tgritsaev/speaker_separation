@@ -16,5 +16,5 @@ class SegmentedPESQMetric(BaseMetric):
         super().__init__(*args, **kwargs)
         self.metric = PerceptualEvaluationSpeechQuality(fs, mode)
 
-    def __call__(self, segmented_s, target_wav, **kwargs):
-        return self.metric(segmented_s, target_wav)
+    def __call__(self, segmented_s, cut_target_wav, **kwargs):
+        return self.metric(segmented_s, cut_target_wav)

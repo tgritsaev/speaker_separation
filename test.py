@@ -97,18 +97,22 @@ def main(config, args):
                 assert dataloader.batch_size == 1, "Yoy can use only `batch_size=1`!"
 
                 window_len = int(args.second * config["preprocessing"]["sr"])
+                wav_len = len(wav)
                 segmented_wavs = []
-                for left in range(0, len(wav), window_len):
-                    right = min(left + window_len, len(wav))
+                for left in range(0, wav_len, window_len):
                     segmented_batch = {}
+                    right = left + window_len
+                    if right > window_len:
+                        break
                     for key in ["x_wav", "y_wav"]:
-                        segmented_batch[key] = torch.Tensor([batch[key][0][left:right]]).to(device)
-                    segmented_batch["x_wav_length"] = torch.Tensor([right - left]).to(device)
+                        segmented_batch[key] = batch[key][0, left:right].unsqueeze(0).to(device)
+                    segmented_batch["x_wav_len"] = torch.Tensor([right - left]).to(device)
 
                     segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
 
                 batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
+                batch.update({"cut_target_wav": batch["target_wav"][0, (wav_len // window_len) * window_len]})
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
@@ -156,7 +160,7 @@ if __name__ == "__main__":
     args.add_argument(
         "-s",
         "--second",
-        default=0.1,
+        default=0.5,
         type=float,
         help="Window length in seconds for segmented speech separation",
     )

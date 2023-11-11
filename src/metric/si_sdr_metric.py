@@ -16,5 +16,5 @@ class SegmentedSISDRMetric(BaseMetric):
         super().__init__(*args, **kwargs)
         self.metric = ScaleInvariantSignalDistortionRatio()
 
-    def __call__(self, segmented_s, target_wav, **kwargs):
-        return self.metric.to(segmented_s.device)(segmented_s, target_wav).item()
+    def __call__(self, segmented_s, cut_target_wav, **kwargs):
+        return self.metric.to(segmented_s.device)(segmented_s, cut_target_wav).item()
