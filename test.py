@@ -77,11 +77,12 @@ def main(config, args):
             if args.asr_checkpoint is not None:
                 _, spectrogram = dataloader.dataset.process_wave(normalized_s.cpu())
                 batch.update({"spectrogram": spectrogram.to(device)})
-                print(spectrogram.shape)
                 batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
                 batch["logits"] = asr_model(**batch)["logits"]
                 batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
                 batch["log_probs_length"] = asr_model.transform_input_lengths(batch["spectrogram_length"])
+
+            print(batch.keys())
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
