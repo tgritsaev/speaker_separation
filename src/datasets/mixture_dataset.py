@@ -23,6 +23,7 @@ class MixtureDataset(BaseDataset):
         self._map_speakers()
         self.len = len(self._index) // 3
         self.cut_mix = cut_mix
+        print(self._index)
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
