@@ -52,7 +52,15 @@ def main(config, args):
         text_encoder = config.get_text_encoder()
         asr_model = load_model("asr_arch", args.asr_checkpoint)
 
-    metrics = [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
+    metrics = []
+    for metric_dict in config["metrics"]:
+        if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
+            if args.asr_checkpoint is not None:
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder))
+        else:
+            metrics.append(config.init_obj(metric_dict, module_metric))
+
+    [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
     with torch.no_grad():
