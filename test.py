@@ -55,7 +55,9 @@ def main(config, args):
     for metric_dict in config["metrics"]:
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder, name=metric_dict["args"]["name"]))
+                metric_name = metric_dict["args"]["name"]
+                print("!!!!!!!!", metric_name)
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder, name=metric_name))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
