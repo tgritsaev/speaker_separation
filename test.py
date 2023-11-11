@@ -110,9 +110,10 @@ def main(config, args):
 
                     segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
-
+                    print(segmented_wav.shape)
                 batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
                 batch.update({"cut_target_wav": batch["target_wav"][0, (wav_len // window_len) * window_len]})
+                print(batch["cut_target_wav"].shape)
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
@@ -160,7 +161,7 @@ if __name__ == "__main__":
     args.add_argument(
         "-s",
         "--second",
-        default=0.5,
+        default=0.1,
         type=float,
         help="Window length in seconds for segmented speech separation",
     )
