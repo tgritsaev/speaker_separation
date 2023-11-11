@@ -53,17 +53,11 @@ def main(config, args):
 
     metrics = []
     for metric_dict in config["metrics"]:
-        print(metric_dict["type"])
-        print("!!!!!", "WER" in metric_dict["type"])
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                print("!!")
-                print(text_encoder)
                 metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
-
-    [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
     with torch.no_grad():
