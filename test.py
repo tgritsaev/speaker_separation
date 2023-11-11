@@ -78,7 +78,7 @@ def main(config, args):
                 _, spectrogram = dataloader.dataset.process_wave(normalized_s.cpu())
                 batch.update({"spectrogram": spectrogram.to(device)})
                 batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
-                batch["logits"] = asr_model(**batch)["logits"].detach().cpu()
+                batch["logits"] = asr_model(**batch)["logits"]
                 batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
                 batch["log_probs_length"] = asr_model.transform_input_lengths(batch["spectrogram_length"])
 
