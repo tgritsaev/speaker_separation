@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 from tqdm import tqdm
 
-import numpy as np
 import torch
+import torch.nn.functional as F
 import librosa
 
 import src.model as ss_module_model
@@ -14,15 +14,6 @@ from src.trainer import Trainer
 from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
-
-
-def vad_merge(w, top_db=12):
-    intervals = librosa.effects.split(w.cpu().numpy(), top_db=top_db)
-    if len(intervals) > 1:
-        for i in range(1, len(intervals)):
-            left, right = intervals[i - 1, 0], intervals[i, 1]
-            w[left:right] = 0
-    return w
 
 
 def main(config, args):
@@ -83,7 +74,9 @@ def main(config, args):
                 batch.update({"spectrogram": spectrogram.to(device)})
                 print(spectrogram.shape)
                 batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
-                logits = asr_model(**batch)
+                batch["logits"] = asr_model(**batch)
+                batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
+                batch["log_probs_length"] = asr_model.transform_input_lengths(batch["spectrogram_length"])
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
@@ -126,7 +119,7 @@ if __name__ == "__main__":
         "--test_data_folder",
         default=None,
         type=str,
-        help="Path to test data folder",
+        help="Path to custom test data folder",
     )
     args.add_argument(
         "-j",
@@ -152,8 +145,10 @@ if __name__ == "__main__":
                     {
                         "type": "CustomDirAudioDataset",
                         "args": {
-                            "audio_dir": str(test_data_folder),
-                            "transcription_dir": str(test_data_folder),
+                            "mix_dir": str(test_data_folder) + "/mix",
+                            "ref_dir": str(test_data_folder) + "/refs",
+                            "target_dir": str(test_data_folder) + "/targets",
+                            "limit": 1,
                         },
                     }
                 ],

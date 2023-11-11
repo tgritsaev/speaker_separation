@@ -19,10 +19,17 @@ class MixtureDataset(BaseDataset):
         index = sorted(list(os.listdir(self.path)))
         if index[0] == "0_texts.txt":
             index = index[1:]
+            self._create_texts()
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
         self.len = len(self._index) // 3
         self.cut_mix = cut_mix
+
+    def _create_texts(self):
+        self.id_to_text = {}
+        with open(self.path / "0_texts.txt", "r") as fin:
+            id, text = fin.readline().split(": ")
+            self.id_to_text[id] = text
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
@@ -47,4 +54,5 @@ class MixtureDataset(BaseDataset):
             x_wav = x_wav[:, : self.cut_mix]
         target_wav = self.load_audio(os.path.join(self.path, self._index[idx + 2]))
         mapped_speaker_id = self.speaker_mapping[get_speaker_id_by_path(self._index[idx])]
-        return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id}
+        id = self._index[idx][:-10]
+        return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id, "text": self.id_to_text[id]}
