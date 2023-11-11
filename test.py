@@ -82,8 +82,6 @@ def main(config, args):
                 batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
                 batch["log_probs_length"] = asr_model.transform_input_lengths(batch["spectrogram_length"])
 
-            print(batch.keys())
-
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
 
