@@ -137,6 +137,7 @@ class ConfigParser:
     def get_text_encoder(self) -> BaseTextEncoder:
         print("!!")
         if self._text_encoder is None:
+            print(self._config)
             if "text_encoder" not in self._config:
                 print("1111111")
                 self._text_encoder = CTCCharTextEncoder()
