@@ -88,6 +88,7 @@ def main(config, args):
 
                 insert_logits("pred_", normalized_s)
                 insert_logits("target_", batch["target_wav"])
+                print("target:", batch["text"])
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))

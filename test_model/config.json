@@ -50,7 +50,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "path": "/kaggle/input/tgritsaev-big-mixture-w-text/mixture/test",
-                        "limit": 10
+                        "limit": 2
                     }
                 }
             ]
