@@ -22,7 +22,6 @@ class BaseTrainer:
         self.metrics = metrics
         self.optimizer = optimizer
         self.use_previous_optimizer = config.use_previous_optimizer
-        print("!!!!!!x2 ", self.use_previous_optimizer)
 
         # for interrupt saving
         self._last_epoch = 0
