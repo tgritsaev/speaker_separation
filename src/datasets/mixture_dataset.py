@@ -18,6 +18,7 @@ class MixtureDataset(BaseDataset):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
         if index[0] == "0_texts.txt":
+            self.text_included = True
             index = index[1:]
             self._create_texts()
         super().__init__(index, *args, **kwargs)
@@ -55,5 +56,8 @@ class MixtureDataset(BaseDataset):
             x_wav = x_wav[:, : self.cut_mix]
         target_wav = self.load_audio(os.path.join(self.path, self._index[idx + 2]))
         mapped_speaker_id = self.speaker_mapping[get_speaker_id_by_path(self._index[idx])]
-        id = self._index[idx][:-10]
-        return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id, "text": self.id_to_text[id]}
+        text = ""
+        if self.text_included:
+            id = self._index[idx][:-10]
+            text = self.id_to_text[id]
+        return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id, "text": text}
