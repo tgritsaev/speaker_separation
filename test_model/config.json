@@ -50,7 +50,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "path": "/Users/timgritsaev/Desktop/dla/speaker_separation/data/mixture/test",
-                        "limit": 2
+                        "limit": 1000
                     }
                 }
             ]

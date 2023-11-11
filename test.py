@@ -112,7 +112,7 @@ def main(config, args):
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
                     print(segmented_wav.shape)
                 batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
-                batch.update({"cut_target_wav": batch["target_wav"][0, (wav_len // window_len) * window_len]})
+                batch.update({"cut_target_wav": batch["target_wav"][0, : (wav_len // window_len) * window_len]})
                 print(batch["cut_target_wav"].shape)
 
             for metric in metrics:

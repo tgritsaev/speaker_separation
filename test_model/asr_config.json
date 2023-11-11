@@ -49,8 +49,8 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "path": "/Users/timgritsaev/Desktop/dla/speaker_separation/data/mixture/test",
-                        "limit": 2
+                        "path": "/kaggle/input/librispeech-mixed/librispeech-mixed/test-clean-mixed",
+                        "limit": 1000
                     }
                 }
             ]
