@@ -8,7 +8,7 @@
 python create_dataset.py -c create_dataset.json
 ```
 3. Download my speech separation checkpoint `link`
-4. Optional, if you want measure WER and CER, download my audio speech recognition checkpoint `link`.
+4. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint `link`.
 
 ## Train 
 
@@ -16,7 +16,14 @@ python create_dataset.py -c create_dataset.json
 
 ## Test
 
-1. 
+0. Make sure that you created dataset and downloaded all needed checkpoints.
+1. If your config and checkpoint are placed in test_model/config.json and test_model/checkpoint.pth respectively.
+```shell
+python test.py
+``` 
+2. Or you can specify paths and run `python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint`
+3. If you want to measure speech recognition model quality on my speech separation solution, use test_model/config_for_asr.json and run `python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
+4. If you want to test quality on segmented audio by 100ms length, run ``.
 
 
 ## Credits

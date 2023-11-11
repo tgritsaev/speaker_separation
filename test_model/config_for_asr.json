@@ -62,6 +62,30 @@
             "args": {
                 "name": "SI-SDR"
             }
+        },
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER target"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER target"
+            }
+        },
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER pred"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER pred"
+            }
         }
     ],
     "lr_scheduler": {
