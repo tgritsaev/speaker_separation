@@ -17,7 +17,7 @@ class MixtureDataset(BaseDataset):
     def __init__(self, path: str = "data/mixture/train", cut_mix=None, *args, **kwargs):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
-        print(index)
+        self.plus_idx = 1 if index[0] == "0_texts.txt" else 0
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
         self.len = len(self._index) // 3
@@ -39,11 +39,11 @@ class MixtureDataset(BaseDataset):
         return self.len
 
     def __getitem__(self, ind):
-        print(self._index[ind * 3])
-        y_wav = self.load_audio(os.path.join(self.path, self._index[ind * 3]))
-        x_wav = self.load_audio(os.path.join(self.path, self._index[ind * 3 + 1]))
+        idx = 3 * ind + self.plus_idx
+        y_wav = self.load_audio(os.path.join(self.path, self._index[idx]))
+        x_wav = self.load_audio(os.path.join(self.path, self._index[idx + 1]))
         if self.cut_mix:
             x_wav = x_wav[:, : self.cut_mix]
-        target_wav = self.load_audio(os.path.join(self.path, self._index[ind * 3 + 2]))
-        mapped_speaker_id = self.speaker_mapping[get_speaker_id_by_path(self._index[ind * 3])]
+        target_wav = self.load_audio(os.path.join(self.path, self._index[idx + 2]))
+        mapped_speaker_id = self.speaker_mapping[get_speaker_id_by_path(self._index[idx])]
         return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id}
