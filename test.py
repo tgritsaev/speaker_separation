@@ -5,12 +5,10 @@ from tqdm import tqdm
 
 import torch
 import torch.nn.functional as F
-import librosa
 
 import src.model as ss_module_model
 import hw_asr.model as asr_module_model
 import src.metric as module_metric
-import hw_asr.metric as asr_module_metric
 from src.trainer import Trainer
 from src.utils import MetricTracker
 from src.utils.object_loading import get_dataloaders
@@ -59,7 +57,9 @@ def main(config, args):
         print("!!!!!", "WER" in metric_dict["type"])
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                metrics.append(config.init_obj(metric_dict, asr_module_metric, text_encoder=text_encoder))
+                print("!!")
+                print(text_encoder)
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
 
