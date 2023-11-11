@@ -21,6 +21,7 @@ class BaseTrainer:
         self.criterion = criterion
         self.metrics = metrics
         self.optimizer = optimizer
+        self.use_previous_optimizer = config.use_previous_optimizer
 
         # for interrupt saving
         self._last_epoch = 0
@@ -51,10 +52,7 @@ class BaseTrainer:
         self.writer = get_visualizer(config, self.logger, cfg_trainer["visualize"])
 
         if config.resume is not None:
-            if config.optimizer:
-                self._resume_checkpoint(config.resume)
-            else:
-                self._load_model(config.resume)
+            self._resume_checkpoint(config.resume)
 
     @abstractmethod
     def _train_epoch(self, epoch):
@@ -90,19 +88,6 @@ class BaseTrainer:
             torch.save(state, best_path)
             self.logger.info("Saving current best: model_best.pth ...")
 
-    def _load_model(self, resume_path):
-        """
-        Resume from saved checkpoints
-
-        :param resume_path: Checkpoint path to be resumed
-        """
-        resume_path = str(resume_path)
-        self.logger.info("Loading model: {} ...".format(resume_path))
-        checkpoint = torch.load(resume_path, self.device)
-        self.model.load_state_dict(checkpoint["state_dict"])
-
-        self.logger.info("Model loaded")
-
     def _resume_checkpoint(self, resume_path):
         """
         Resume from saved checkpoints
@@ -123,9 +108,9 @@ class BaseTrainer:
             )
         self.model.load_state_dict(checkpoint["state_dict"])
 
-        # load optimizer state from checkpoint only when optimizer type is not changed.
-        if self.optimizer:
+        if self.use_previous_optimizer:
             self.logger.info("Optimizer and lr_scheduler are loading...")
+            # load optimizer state from checkpoint only when optimizer type is not changed.
             if checkpoint["config"]["optimizer"] != self.config["optimizer"] or checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]:
                 self.logger.warning(
                     "Warning: Optimizer or lr_scheduler given in config file is different " "from that of checkpoint. Optimizer parameters not being resumed."

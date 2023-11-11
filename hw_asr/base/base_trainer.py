@@ -48,9 +48,7 @@ class BaseTrainer:
         self.checkpoint_dir = config.save_dir
 
         # setup visualization writer instance
-        self.writer = get_visualizer(
-            config, self.logger, cfg_trainer["visualize"]
-        )
+        self.writer = get_visualizer(config, self.logger, cfg_trainer["visualize"])
 
         if config.resume is not None:
             self._load_model(config.resume)
@@ -103,12 +101,7 @@ class BaseTrainer:
                     else:
                         improved = False
                 except KeyError:
-                    self.logger.warning(
-                        "Warning: Metric '{}' is not found. "
-                        "Model performance monitoring is disabled.".format(
-                            self.mnt_metric
-                        )
-                    )
+                    self.logger.warning("Warning: Metric '{}' is not found. " "Model performance monitoring is disabled.".format(self.mnt_metric))
                     self.mnt_mode = "off"
                     improved = False
 
@@ -120,10 +113,7 @@ class BaseTrainer:
                     not_improved_count += 1
 
                 if not_improved_count > self.early_stop:
-                    self.logger.info(
-                        "Validation performance didn't improve for {} epochs. "
-                        "Training stops.".format(self.early_stop)
-                    )
+                    self.logger.info("Validation performance didn't improve for {} epochs. " "Training stops.".format(self.early_stop))
                     break
 
             if epoch % self.save_period == 0 or best:
@@ -164,10 +154,9 @@ class BaseTrainer:
         self.logger.info("Loading model: {} ...".format(resume_path))
         checkpoint = torch.load(resume_path, self.device)
         self.model.load_state_dict(checkpoint["state_dict"])
-        
+
         self.logger.info("Model loaded")
-        
-        
+
     def _resume_checkpoint(self, resume_path):
         """
         Resume from saved checkpoints
@@ -189,17 +178,11 @@ class BaseTrainer:
         self.model.load_state_dict(checkpoint["state_dict"])
 
         # load optimizer state from checkpoint only when optimizer type is not changed.
-        if (
-                checkpoint["config"]["optimizer"] != self.config["optimizer"] or
-                checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]
-        ):
+        if checkpoint["config"]["optimizer"] != self.config["optimizer"] or checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]:
             self.logger.warning(
-                "Warning: Optimizer or lr_scheduler given in config file is different "
-                "from that of checkpoint. Optimizer parameters not being resumed."
+                "Warning: Optimizer or lr_scheduler given in config file is different " "from that of checkpoint. Optimizer parameters not being resumed."
             )
         else:
             self.optimizer.load_state_dict(checkpoint["optimizer"])
 
-        self.logger.info(
-            "Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch)
-        )
+        self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
