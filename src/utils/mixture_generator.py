@@ -159,8 +159,9 @@ class MixtureGenerator:
                 wav_path1, wav_path2 = sample1["path"], sample2["path"]
             root1, root2 = Path(wav_path1).parent.parent, Path(wav_path2).parent.parent
 
+            target = wav_path1
             all_files_speaker1 = list(root1.rglob("*.flac"))
-            target, reference = random.sample(all_files_speaker1, 2)
+            reference = random.choice(all_files_speaker1)
             noise = wav_path2
             all_triplets["reference"].append(reference)
             all_triplets["target"].append(target)

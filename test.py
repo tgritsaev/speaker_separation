@@ -80,15 +80,12 @@ def main(config, args):
                 def insert_logits(pref, wav):
                     _, spectrogram = dataloader.dataset.process_wave(wav.cpu())
                     batch["spectrogram"] = spectrogram.to(device)
-                    print("\nspectrogram:", spectrogram.shape)
                     batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
-                    print("\nspectrogram_length:", batch["spectrogram_length"])
                     batch[pref + "log_probs"] = F.log_softmax(asr_model(**batch)["logits"], dim=-1)
-                    batch[pref + "lengths"] = [int(asr_model.transform_input_lengths(batch["spectrogram_length"]).item())]
+                    batch[pref + "lengths"] = [len(batch["text"][0])]
 
                 insert_logits("pred_", normalized_s)
                 insert_logits("target_", batch["target_wav"])
-                print("target:", batch["text"])
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))

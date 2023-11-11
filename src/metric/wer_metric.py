@@ -25,9 +25,8 @@ class ArgmaxWERMetric(BaseMetric):
         for log_prob_vec, length, target_text in zip(predictions, lengths, text):
             target_text = BaseTextEncoder.normalize_text(target_text)
             if hasattr(self.text_encoder, "ctc_decode"):
-                pred_text = self.text_encoder.ctc_decode(log_prob_vec[:length])
+                pred_text = self.text_encoder.ctc_decode(log_prob_vec)[:length]
             else:
-                pred_text = self.text_encoder.decode(log_prob_vec[:length])
-            print(target_text, "---", pred_text)
+                pred_text = self.text_encoder.decode(log_prob_vec)[:length]
             wers.append(calc_wer(target_text, pred_text))
         return sum(wers) / len(wers)

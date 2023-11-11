@@ -56,7 +56,4 @@ class MixtureDataset(BaseDataset):
         target_wav = self.load_audio(os.path.join(self.path, self._index[idx + 2]))
         mapped_speaker_id = self.speaker_mapping[get_speaker_id_by_path(self._index[idx])]
         id = self._index[idx][:-10]
-        print("\npath1", self._index[idx])
-        print("\npath2", self._index[idx + 1])
-        print("\npath3", self._index[idx + 2])
         return {"y_wav": y_wav, "x_wav": x_wav, "target_wav": target_wav, "speaker_id": mapped_speaker_id, "text": self.id_to_text[id]}
