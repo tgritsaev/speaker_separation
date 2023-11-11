@@ -78,7 +78,6 @@ class ConfigParser:
             resume = None
             cfg_fname = Path(args.config)
         use_previous_optimizer = args.optimizer
-        print("!!!!!!!!!!", use_previous_optimizer)
 
         config = read_json(cfg_fname)
         # if args.config and resume:
