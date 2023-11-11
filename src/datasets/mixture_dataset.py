@@ -17,8 +17,8 @@ class MixtureDataset(BaseDataset):
     def __init__(self, path: str = "data/mixture/train", cut_mix=None, *args, **kwargs):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
-        if index[0] == "0_texts.txt":
-            self.text_included = True
+        self.text_included = index[0] == "0_texts.txt"
+        if self.text_included:
             index = index[1:]
             self._create_texts()
         super().__init__(index, *args, **kwargs)
