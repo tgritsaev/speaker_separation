@@ -17,6 +17,7 @@ class MixtureDataset(BaseDataset):
     def __init__(self, path: str = "data/mixture/train", cut_mix=None, *args, **kwargs):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
+        print(index)
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
         self.len = len(self._index) // 3
