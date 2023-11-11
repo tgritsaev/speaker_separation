@@ -102,7 +102,7 @@ class ConfigParser:
             default_module = importlib.import_module(obj_dict["module"])
         module_name = obj_dict["type"]
         module_args = dict(obj_dict["args"])
-        print([k not in module_args for k in kwargs])
+        print(module_args, "WTF", kwargs)
         assert all([k not in module_args for k in kwargs]), "Overwriting kwargs given in config file is not allowed"
         module_args.update(kwargs)
         return getattr(default_module, module_name)(*args, **module_args)
