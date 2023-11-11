@@ -30,7 +30,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "train-clean-100-mixed",
+                        "path": "/kaggle/input/tgritsaev-big-mixture-w-text/mixture/train",
                         "cut_mix": 140000
                     }
                 }
@@ -43,7 +43,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "test-clean-mixed",
+                        "path": "/kaggle/input/tgritsaev-big-mixture-w-text/mixture/test",
                         "limit": 1000
                     }
                 }
