@@ -17,13 +17,12 @@ class MixtureDataset(BaseDataset):
     def __init__(self, path: str = "data/mixture/train", cut_mix=None, *args, **kwargs):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
-        self.plus_idx = 1 if index[0] == "0_texts.txt" else 0
-        print(self.plus_idx)
+        if index[0] == "0_texts.txt":
+            index = index[1:]
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
         self.len = len(self._index) // 3
         self.cut_mix = cut_mix
-        print(self._index)
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
@@ -41,8 +40,7 @@ class MixtureDataset(BaseDataset):
         return self.len
 
     def __getitem__(self, ind):
-        idx = 3 * ind + self.plus_idx
-        print(self._index[idx], self._index[idx + 1], self._index[idx + 2])
+        idx = 3 * ind
         y_wav = self.load_audio(os.path.join(self.path, self._index[idx]))
         x_wav = self.load_audio(os.path.join(self.path, self._index[idx + 1]))
         if self.cut_mix:
