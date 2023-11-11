@@ -109,8 +109,7 @@ def main(config, args):
                     segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
                 batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
-                batch.update({"cut_target_wav": batch["target_wav"][0, :cut_len]})
-                print(batch["cut_target_wav"].shape)
+                batch.update({"cut_target_wav": batch["target_wav"][0, :cut_len].unsqueeze(0)})
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
