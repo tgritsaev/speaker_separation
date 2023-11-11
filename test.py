@@ -55,7 +55,7 @@ def main(config, args):
     for metric_dict in config["metrics"]:
         if "WER" in metric_dict["type"] or "CER" in metric_dict["type"]:
             if args.asr_checkpoint is not None:
-                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder))
+                metrics.append(config.init_obj(metric_dict, module_metric, text_encoder=text_encoder, name=metric_dict["args"]["name"]))
         else:
             metrics.append(config.init_obj(metric_dict, module_metric))
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
@@ -75,11 +75,17 @@ def main(config, args):
             batch.update({"normalized_s": normalized_s})
 
             if args.asr_checkpoint is not None:
-                _, spectrogram = dataloader.dataset.process_wave(normalized_s.cpu())
-                batch.update({"spectrogram": spectrogram.to(device)})
-                batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
-                batch["logits"] = asr_model(**batch)["logits"]
-                batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
+
+                def insert_logits(pref, wav):
+                    _, spectrogram = dataloader.dataset.process_wave(wav.cpu())
+                    batch["spectrogram"] = spectrogram.to(device)
+                    batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
+
+                    batch[pref + "logits"] = asr_model(**batch)["logits"]
+                    batch[pref + "log_probs"] = F.log_softmax(batch["logits"], dim=-1)
+
+                insert_logits("pred", normalized_s)
+                insert_logits("target", batch["target_wav"])
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))

@@ -66,13 +66,25 @@
         {
             "type": "ArgmaxWERMetric",
             "args": {
-                "name": "WER"
+                "name": "WER target"
             }
         },
         {
             "type": "ArgmaxCERMetric",
             "args": {
-                "name": "CER"
+                "name": "CER target"
+            }
+        },
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER pred"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER pred"
             }
         }
     ],
