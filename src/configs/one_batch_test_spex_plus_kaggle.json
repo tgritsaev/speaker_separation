@@ -30,7 +30,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "train-clean-100-mixed",
+                        "path": "/kaggle/input/librispeech-mixed/librispeech-mixed/train-clean-100-mixed",
                         "limit": 10,
                         "cut_mix": 96000
                     }

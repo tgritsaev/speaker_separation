@@ -30,7 +30,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "train-clean-100-mixed",
+                        "part": "/kaggle/input/librispeech-mixed/librispeech-mixed/train-clean-100-mixed",
                         "cut_mix": 96000
                     }
                 }
@@ -43,8 +43,8 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "part": "test-clean-mixed",
-                        "limit": 1000
+                        "part": "/kaggle/input/librispeech-mixed/librispeech-mixed/test-clean-mixed",
+                        "limit": 10
                     }
                 }
             ]
