@@ -58,6 +58,18 @@
             "args": {
                 "name": "SI-SDR"
             }
+        },
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER"
+            }
         }
     ],
     "lr_scheduler": {
