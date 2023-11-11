@@ -84,6 +84,7 @@ if __name__ == "__main__":
         "-o",
         "--optimizer",
         default=False,
+        action="store_false",
         type=bool,
         help="load previous optimizer",
     )
