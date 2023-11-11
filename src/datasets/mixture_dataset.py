@@ -41,7 +41,6 @@ class MixtureDataset(BaseDataset):
 
     def __getitem__(self, ind):
         idx = 3 * ind
-        print(self._index[idx], self._index[idx + 1], self._index[idx + 2])
         y_wav = self.load_audio(os.path.join(self.path, self._index[idx]))
         x_wav = self.load_audio(os.path.join(self.path, self._index[idx + 1]))
         if self.cut_mix:
