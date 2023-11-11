@@ -30,6 +30,7 @@ class MixtureDataset(BaseDataset):
         with open(self.path / "0_texts.txt", "r") as fin:
             id, text = fin.readline().split(": ")
             self.id_to_text[id] = text
+        print("!!!!!!", id)
 
     def _map_speakers(self):
         logging.info("speakers mapping is started...")
