@@ -50,7 +50,7 @@
                     "type": "MixtureDataset",
                     "args": {
                         "path": "/kaggle/input/librispeech-mixed/librispeech-mixed/test-clean-mixed",
-                        "limit": 100
+                        "limit": 25
                     }
                 }
             ]
