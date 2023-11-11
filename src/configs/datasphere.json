@@ -88,15 +88,15 @@
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-            "steps_per_epoch": 5000,
-            "epochs": 20,
+            "steps_per_epoch": 10000,
+            "epochs": 12,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
             "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 20,
+        "epochs": 12,
         "iters_to_accumulate": 1,
         "save_dir": "saved/",
         "save_period": 1,
@@ -105,7 +105,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss",
-        "len_epoch": 5000,
+        "len_epoch": 10000,
         "grad_norm_clip": 25
     }
 }
