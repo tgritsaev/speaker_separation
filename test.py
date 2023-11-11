@@ -83,8 +83,8 @@ def main(config, args):
                     batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
                     batch[pref + "log_probs"] = F.log_softmax(asr_model(**batch)["logits"], dim=-1)
 
-                insert_logits("pred", normalized_s)
-                insert_logits("target", batch["target_wav"])
+                insert_logits("pred_", normalized_s)
+                insert_logits("target_", batch["target_wav"])
 
             for metric in metrics:
                 metrics_tracker.update(metric.name, metric(**batch))
