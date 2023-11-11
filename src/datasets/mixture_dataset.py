@@ -14,12 +14,8 @@ def get_speaker_id_by_path(path):
 
 
 class MixtureDataset(BaseDataset):
-    def __init__(self, part: str, cut_mix=None, *args, **kwargs):
-        if part in ["train-clean-100-mixed", "test-clean-mixed"]:
-            self.path = Path("/kaggle/input/librispeech-mixed/librispeech-mixed/" + part)
-            # self.path = Path("/kaggle/input/tgritsaev-librispeech-mixed/librispeech-mixed/" + part)
-        else:
-            self.path = Path("data/mixture/" + part)
+    def __init__(self, path: str = "data/mixture/train", cut_mix=None, *args, **kwargs):
+        self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
         super().__init__(index, *args, **kwargs)
         self._map_speakers()

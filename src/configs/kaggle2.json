@@ -1,5 +1,5 @@
 {
-    "name": "test",
+    "name": "train",
     "n_gpu": 1,
     "preprocessing": {
         "sr": 16000,
@@ -11,7 +11,7 @@
         "wave": [],
         "spectrogram": []
     },
-    "ss_arch": {
+    "arch": {
         "type": "SpExPlusModel",
         "args": {
             "L1": 20, 
@@ -19,20 +19,23 @@
             "L3": 160, 
             "N": 256, 
             "ResNetBlock_cnt": 3,
-            "TCN_cnt": 8,
-            "speakers_cnt": 251
-        }
-    },
-    "asr_arch": {
-        "type": "DeepSpeech2Model",
-        "args": {
-            "n_feats": 256,
-            "n_rnn_layers": 6,
-            "rnn_hidden_size": 512,
-            "rnn_dropout": 0.2
+            "TCN_cnt": 8
         }
     },
     "data": {
+        "train": {
+            "batch_size": 4,
+            "num_workers": 1,
+            "datasets": [
+                {
+                    "type": "MixtureDataset",
+                    "args": {
+                        "part": "train-clean-100-mixed",
+                        "cut_mix": 140000
+                    }
+                }
+            ]
+        },
         "test": {
             "batch_size": 1,
             "num_workers": 1,
@@ -40,34 +43,61 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "path": "/kaggle/input/tgritsaev-big-mixture-w-text/mixture/test",
+                        "part": "test-clean-mixed",
                         "limit": 1000
                     }
                 }
             ]
         }
     },
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 1e-3,
+            "weight_decay": 1e-5
+        }
+    },
+    "loss": {
+        "type": "SpExPlusLoss",
+        "args": {
+            "alpha": 0.1,
+            "beta": 0.1,
+            "gamma": 0.5
+        }
+    },
     "metrics": [
+        {
+            "type": "PESQMetric",
+            "args": {
+                "name": "PESQ"
+            }
+        },
         {
             "type": "SISDRMetric",
             "args": {
                 "name": "SI-SDR"
+            }
+        },
+        {
+            "type": "AccuracyMetric",
+            "args": {
+                "name": "accuracy"
             }
         }
     ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-            "steps_per_epoch": 10000,
-            "epochs": 4,
+            "steps_per_epoch": 5000,
+            "epochs": 8,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
             "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 4,
-        "iters_to_accumulate": 2,
+        "epochs": 8,
+        "iters_to_accumulate": 1,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
@@ -75,7 +105,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "dla2_ss",
-        "len_epoch": 10000,
+        "len_epoch": 5000,
         "grad_norm_clip": 25
     }
 }
