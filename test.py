@@ -70,7 +70,7 @@ def main(config, args):
             batch.update({"normalized_s": normalized_s})
 
             if args.asr_checkpoint is not None:
-                spectrogram = dataloader.dataset.process_wave(normalized_s.cpu())
+                _, spectrogram = dataloader.dataset.process_wave(normalized_s.cpu())
                 batch.update({"spectrogram": spectrogram.to(device)})
                 print(spectrogram.shape)
                 batch.update({"spectrogram_length": torch.Tensor([spectrogram.shape[1]]).to(device)})
