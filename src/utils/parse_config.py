@@ -15,7 +15,7 @@ from src.utils import read_json, write_json, ROOT_PATH
 
 
 class ConfigParser:
-    def __init__(self, config, resume=None, modification=None, run_id=None):
+    def __init__(self, config, resume=None, optimizer=False, modification=None, run_id=None):
         """
         class to parse configuration json file. Handles hyperparameters for training,
         initializations of modules, checkpoint saving and logging module.
@@ -30,6 +30,7 @@ class ConfigParser:
         # load config file and apply modification
         self._config = _update_config(config, modification)
         self.resume = resume
+        self.optimizer = optimizer
         self._text_encoder = None
 
         # set save_dir where trained model and log will be saved.
@@ -76,15 +77,16 @@ class ConfigParser:
             assert args.config is not None, msg_no_cfg
             resume = None
             cfg_fname = Path(args.config)
+        optimizer = args.opimizer
 
         config = read_json(cfg_fname)
-        if args.config and resume:
-            # update new config for fine-tuning
-            config.update(read_json(args.config))
+        # if args.config and resume:
+        #     # update new config for fine-tuning
+        #     config.update(read_json(args.config))
 
         # parse custom cli options into dictionary
         modification = {opt.target: getattr(args, _get_opt_name(opt.flags)) for opt in options}
-        return cls(config, resume, modification)
+        return cls(config, resume, optimizer, modification)
 
     @staticmethod
     def init_obj(obj_dict, default_module, *args, **kwargs):
