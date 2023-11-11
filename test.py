@@ -97,22 +97,19 @@ def main(config, args):
                 assert dataloader.batch_size == 1, "Yoy can use only `batch_size=1`!"
 
                 window_len = int(args.second * config["preprocessing"]["sr"])
-                wav_len = len(wav)
                 segmented_wavs = []
-                for left in range(0, wav_len, window_len):
+                cut_len = (wav.shape[1] // window_len) * window_len
+                for left in range(0, cut_len, window_len):
                     segmented_batch = {}
                     right = left + window_len
-                    if right > window_len:
-                        break
-                    for key in ["x_wav", "y_wav"]:
-                        segmented_batch[key] = batch[key][0, left:right].unsqueeze(0).to(device)
-                    segmented_batch["x_wav_len"] = torch.Tensor([right - left]).to(device)
+                    segmented_batch["x_wav"] = batch["y_wav"]
+                    segmented_batch["y_wav"] = batch["y_wav"][0, left:right].unsqueeze(0).to(device)
+                    segmented_batch["x_wav_len"] = torch.Tensor([window_len]).to(device)
 
                     segmented_wav = torch.nan_to_num(ss_model(**segmented_batch)["s1"], nan=0)
                     segmented_wavs.append((20 * segmented_wav / segmented_wav.norm()).to(torch.float32))
-                    print(segmented_wav.shape)
                 batch.update({"segmented_s": torch.concatenate(segmented_wavs, dim=1)})
-                batch.update({"cut_target_wav": batch["target_wav"][0, : (wav_len // window_len) * window_len]})
+                batch.update({"cut_target_wav": batch["target_wav"][0, :cut_len]})
                 print(batch["cut_target_wav"].shape)
 
             for metric in metrics:
