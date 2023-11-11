@@ -18,6 +18,7 @@ class MixtureDataset(BaseDataset):
         self.path = Path(path)
         index = sorted(list(os.listdir(self.path)))
         self.plus_idx = 1 if index[0] == "0_texts.txt" else 0
+        print(self.plus_idx)
         super().__init__(index, *args, **kwargs)
         self._map_speakers()
         self.len = len(self._index) // 3
@@ -40,6 +41,7 @@ class MixtureDataset(BaseDataset):
 
     def __getitem__(self, ind):
         idx = 3 * ind + self.plus_idx
+        print(self._index[idx], self._index[idx + 1], self._index[idx + 2])
         y_wav = self.load_audio(os.path.join(self.path, self._index[idx]))
         x_wav = self.load_audio(os.path.join(self.path, self._index[idx + 1]))
         if self.cut_mix:
