@@ -30,7 +30,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "path": "librispeech-mixes/train-clean-100-mixed",
+                        "path": "/home/jupyter/work/resources/librispeech-mixes/train-clean-100-mixed",
                         "cut_mix": 140000
                     }
                 }
@@ -43,7 +43,7 @@
                 {
                     "type": "MixtureDataset",
                     "args": {
-                        "path": "librispeech-mixes/test-clean-mixed",
+                        "path": "/home/jupyter/work/resources/librispeech-mixes/test-clean-mixed",
                         "limit": 1000
                     }
                 }
@@ -89,14 +89,14 @@
         "type": "OneCycleLR",
         "args": {
             "steps_per_epoch": 10000,
-            "epochs": 11,
+            "epochs": 12,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
             "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 11,
+        "epochs": 12,
         "iters_to_accumulate": 1,
         "save_dir": "saved/",
         "save_period": 1,
