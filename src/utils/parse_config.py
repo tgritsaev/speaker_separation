@@ -77,7 +77,7 @@ class ConfigParser:
             assert args.config is not None, msg_no_cfg
             resume = None
             cfg_fname = Path(args.config)
-        optimizer = args.opimizer
+        optimizer = args.optimizer
 
         config = read_json(cfg_fname)
         # if args.config and resume:
