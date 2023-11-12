@@ -67,12 +67,6 @@
     },
     "metrics": [
         {
-            "type": "PESQMetric",
-            "args": {
-                "name": "PESQ"
-            }
-        },
-        {
             "type": "SISDRMetric",
             "args": {
                 "name": "SI-SDR"
