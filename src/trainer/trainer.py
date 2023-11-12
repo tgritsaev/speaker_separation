@@ -31,7 +31,7 @@ class Trainer(BaseTrainer):
         len_epoch=None,
         skip_oom=True,
     ):
-        super().__init__(model, criterion, metrics, optimizer, config, device)
+        super().__init__(model, criterion, metrics, optimizer, lr_scheduler, config, device)
         self.skip_oom = skip_oom
         self.config = config
         self.train_dataloader = dataloaders["train"]
@@ -43,7 +43,6 @@ class Trainer(BaseTrainer):
             self.train_dataloader = inf_loop(self.train_dataloader)
             self.len_epoch = len_epoch
         self.evaluation_dataloaders = {k: v for k, v in dataloaders.items() if k != "train"}
-        self.lr_scheduler = lr_scheduler
         self.log_step = 100
 
         self.iters_to_accumulate = config["trainer"].get("iters_to_accumulate", 1)
