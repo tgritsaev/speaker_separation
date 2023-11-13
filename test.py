@@ -67,8 +67,10 @@ def main(config, args):
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
     with torch.no_grad():
-        for i, batch in enumerate(tqdm(dataset)):
-            batch["x_wav_len"] = torch.Tensor(batch["x_wav"].shape[1])
+        for i, pre_batch in enumerate(tqdm(dataset)):
+            for key in pre_batch.keys():
+                pre_batch[key] = [pre_batch[key]]
+            batch = ss_collate_fn(pre_batch)
             batch = Trainer.move_batch_to_device(batch, device)
 
             # basic metrics
