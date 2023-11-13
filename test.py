@@ -122,13 +122,6 @@ def main(config, args):
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description="PyTorch Template")
-    # args.add_argument(
-    #     "-o",
-    #     "--output",
-    #     default="output.json",
-    #     type=str,
-    #     help="File to write results (.json)",
-    # )
     args.add_argument(
         "-c",
         "--config",

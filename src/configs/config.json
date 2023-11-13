@@ -1,18 +1,9 @@
 {
-    "name": "test",
+    "name": "datasphere",
     "n_gpu": 1,
-    "text_encoder": {
-        "type": "CTCCharTextEncoder",
-        "args": {}
-    },
     "preprocessing": {
         "sr": 16000,
-        "spectrogram": {
-            "type": "MelSpectrogram",
-            "args": {
-                "n_mels": 256
-            }
-        },
+        "spectrogram": {},
         "log_spec": true
     },
     "augmentations": {
@@ -20,7 +11,7 @@
         "wave": [],
         "spectrogram": []
     },
-    "ss_arch": {
+    "arch": {
         "type": "SpExPlusModel",
         "args": {
             "L1": 20, 
@@ -28,20 +19,23 @@
             "L3": 160, 
             "N": 256, 
             "ResNetBlock_cnt": 3,
-            "TCN_cnt": 8,
-            "speakers_cnt": 251
-        }
-    },
-    "asr_arch": {
-        "type": "DeepSpeech2Model",
-        "args": {
-            "n_feats": 256,
-            "n_rnn_layers": 6,
-            "rnn_hidden_size": 512,
-            "rnn_dropout": 0.2
+            "TCN_cnt": 8
         }
     },
     "data": {
+        "train": {
+            "batch_size": 6,
+            "num_workers": 1,
+            "datasets": [
+                {
+                    "type": "MixtureDataset",
+                    "args": {
+                        "path": "data/mixture/train",
+                        "cut_mix": 140000
+                    }
+                }
+            ]
+        },
         "test": {
             "batch_size": 1,
             "num_workers": 1,
@@ -56,6 +50,21 @@
             ]
         }
     },
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 1e-3,
+            "weight_decay": 1e-5
+        }
+    },
+    "loss": {
+        "type": "SpExPlusLoss",
+        "args": {
+            "alpha": 0.1,
+            "beta": 0.1,
+            "gamma": 0.5
+        }
+    },
     "metrics": [
         {
             "type": "SISDRMetric",
@@ -64,9 +73,9 @@
             }
         },
         {
-            "type": "PESQMetric",
+            "type": "AccuracyMetric",
             "args": {
-                "name": "PESQ"
+                "name": "accuracy"
             }
         }
     ],
@@ -74,15 +83,15 @@
         "type": "OneCycleLR",
         "args": {
             "steps_per_epoch": 10000,
-            "epochs": 4,
+            "epochs": 10,
             "anneal_strategy": "cos",
             "max_lr": 1e-3,
             "pct_start": 0.2
         }
     },
     "trainer": {
-        "epochs": 4,
-        "iters_to_accumulate": 2,
+        "epochs": 10,
+        "iters_to_accumulate": 1,
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,

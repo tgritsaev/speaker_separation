@@ -2,7 +2,10 @@
 
 ## Installation guide
 
-1. `pip install -r requirements.txt`
+1. Install libraries
+```shell
+pip install -r requirements.txt
+```
 2. Download Librispeech and create Mixture dataset
 ```shell
 python create_dataset.py -c create_dataset.json
@@ -12,18 +15,45 @@ python create_dataset.py -c create_dataset.json
 
 ## Train 
 
-1. `python train.py -c path_to_config`, for example, `python train.py -c src/configs/kaggle.json`.
+1. General training pipeline or reproduce my final train setup.
+```shell
+python train.py -c path_to_config
+python train.py -c src/configs/config.json
+```
 
 ## Test
 
-1. Make sure that you created dataset and downloaded all needed checkpoints, then set correct path to the dataset in configs.
-2. If your config and checkpoint are placed in test_model/config.json and test_model/checkpoint.pth respectively.
+1. Make sure that you created dataset and downloaded all needed checkpoints, then set correct path to the dataset in config.
+2. If your config and checkpoint are placed as `test_model/config.json` and `test_model/checkpoint.pth` respectively, you can simply run
 ```shell
 python test.py
-``` 
-1. Or you can specify paths and run `python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint`
-2. If you want to measure speech recognition model quality on my speech separation solution, use test_model/asr_config.json and run `python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
-3. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run `python3 test.py -c test_model/segmentation_config.json -s window_len_in_seconds`.
+```
+1. Or you can specify paths and run 
+```shell
+python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
+```
+2. If you have your test dataset in the format:
+.
+├── mix
+│   ├── ID-mixed.wav
+│   └── ...
+├── refs
+│   ├── ID-ref.wav
+│   ├── ...
+├── targets
+    ├── ID-target.wav
+    ├── ... 
+```shell
+python test.py --test_data_folder path_to_data_folder
+```
+3. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
+```shell
+python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
+```
+4. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
+```shell
+python3 test.py -c test_model/segmentation_config.json -s window_len_in_seconds
+```
 
 
 ## Credits
