@@ -181,7 +181,7 @@ if __name__ == "__main__":
                             "mix_dir": str(test_data_folder) + "/mix",
                             "ref_dir": str(test_data_folder) + "/refs",
                             "target_dir": str(test_data_folder) + "/targets",
-                            "limit": 1,
+                            "limit": 1000,
                         },
                     }
                 ],
