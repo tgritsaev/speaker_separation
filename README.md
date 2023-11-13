@@ -31,7 +31,7 @@ python test.py
 ```shell
 python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
 ```
-4. If you have your test dataset in the format:
+4. If you have your test dataset in the following format:
 ```shell
 .
 ├── mix
@@ -50,6 +50,7 @@ Run
 python test.py --test_data_folder path_to_data_folder
 ```
 This approach does not support texts.
+
 5. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
 ```shell
 python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
