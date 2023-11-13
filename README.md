@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```shell
 python create_dataset.py -c create_dataset.json
 ```
-3. Download my speech separation checkpoint `link`
+3. If you want to test my solution quality, download my speech separation checkpoint `link`
 4. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint `link`.
 
 ## Train 
@@ -23,16 +23,17 @@ python train.py -c src/configs/config.json
 
 ## Test
 
-1. Make sure that you created dataset and downloaded all needed checkpoints, then set correct path to the dataset in config.
+1. Make sure that you created dataset and downloaded all needed checkpoints, the path to the dataset in config is correct.
 2. If your config and checkpoint are placed as `test_model/config.json` and `test_model/checkpoint.pth` respectively, you can simply run
 ```shell
 python test.py
 ```
-1. Or you can specify paths and run 
+3. Or you can specify paths and run 
 ```shell
 python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
 ```
-2. If you have your test dataset in the format:
+4. If you have your test dataset in the format:
+```shell
 .
 ├── mix
 │   ├── ID-mixed.wav
@@ -43,14 +44,13 @@ python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
 ├── targets
     ├── ID-target.wav
     ├── ... 
-```shell
 python test.py --test_data_folder path_to_data_folder
 ```
-3. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
+1. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
 ```shell
 python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
 ```
-4. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
+1. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
 ```shell
 python3 test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 ```
