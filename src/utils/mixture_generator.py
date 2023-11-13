@@ -104,7 +104,7 @@ def create_mix(idx, triplet, snr_levels, out_dir, test=False, sr=16000, **kwargs
     snr = np.random.choice(snr_levels, 1).item()
 
     if not test:
-        # s1, s2 = vad_merge(s1, vad_db), vad_merge(s2, vad_db)
+        s1, s2 = vad_merge(s1, vad_db), vad_merge(s2, vad_db)
         s1_cut, s2_cut = cut_audios(s1, s2, audioLen, sr)
 
         for i in range(len(s1_cut)):
@@ -171,27 +171,6 @@ class MixtureGenerator:
             all_triplets["text"].append(sample1["text"])
 
         return all_triplets
-
-    # def triplet_generator(self, target_speaker, noise_speaker, number_of_triplets):
-    #     max_num_triplets = min(len(target_speaker.files), len(noise_speaker.files))
-    #     number_of_triplets = min(max_num_triplets, number_of_triplets)
-
-    #     target_samples = random.sample(target_speaker.files, k=number_of_triplets)
-    #     reference_samples = random.sample(target_speaker.files, k=number_of_triplets)
-    #     noise_samples = random.sample(noise_speaker.files, k=number_of_triplets)
-
-    #     triplets = {
-    #         "reference": [],
-    #         "target": [],
-    #         "noise": [],
-    #         "target_id": [target_speaker.id] * number_of_triplets,
-    #         "noise_id": [noise_speaker.id] * number_of_triplets,
-    #     }
-    #     triplets["target"] += target_samples
-    #     triplets["reference"] += reference_samples
-    #     triplets["noise"] += noise_samples
-
-    #     return triplets
 
     def generate_mixes(self, snr_levels=[0], num_workers=4, update_steps=100, **kwargs):
         triplets = self.generate_triplets()
