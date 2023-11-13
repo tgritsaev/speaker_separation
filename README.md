@@ -65,7 +65,7 @@ python test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 
 ## Wandb Report
 
-
+https://api.wandb.ai/links/tgritsaev/rkir8sp9
 
 ## Credits
 
