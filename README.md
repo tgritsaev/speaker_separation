@@ -10,8 +10,7 @@ pip install -r requirements.txt
 ```shell
 python create_dataset.py -c create_dataset.json
 ```
-3. If you want to test my solution quality, download my speech separation checkpoint `link`
-4. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint `link`.
+3. If you want to test my solution quality, download my speech separation checkpoint (ss-checkpoint.pth) from https://drive.google.com/drive/folders/14dn7NIHOfOoIUm_hCkZ7RUHhniErGvzp?usp=sharing. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint, named `asr-checkpoint.pth`, from the same link.
 
 ## Train 
 
@@ -50,45 +49,19 @@ Run
 ```shell
 python test.py --test_data_folder path_to_data_folder
 ```
-If you have texts, just place them in the directory
-```shell
-.
-├── mix
-│   ├── ID-mixed.wav
-│   └── ...
-├── refs
-│   ├── ID-ref.wav
-│   └── ...
-├── targets
-│   ├── ID-target.wav
-│   └── ... 
-├── ID-text.txt
-└── ...
-```
-or
-```shell
-.
-├── mix
-│   ├── ID-mixed.wav
-│   └── ...
-├── refs
-│   ├── ID-ref.wav
-│   ├── ...
-├── targets
-│   ├── ID-target.wav
-│   ├── ... 
-└── texts 
-    ├── ID-text.txt
-    └── ... 
-```
-1. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
+This approach does not support texts.
+5. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
 ```shell
 python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
 ```
-1. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
+6. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
 ```shell
 python test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 ```
+
+## Wandb Report
+
+
 
 ## Credits
 
