@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```shell
 python create_dataset.py -c create_dataset.json
 ```
-1. If you want to test my solution quality, download my speech separation checkpoint `ss-checkpoint.pth` from the https://drive.google.com/drive/folders/14dn7NIHOfOoIUm_hCkZ7RUHhniErGvzp?usp=sharing. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint, named `asr-checkpoint.pth`, from the same link.
+3. If you want to test my solution quality, download my speech separation checkpoint `ss-checkpoint.pth` from the https://drive.google.com/drive/folders/14dn7NIHOfOoIUm_hCkZ7RUHhniErGvzp?usp=sharing. Optional, if you want to measure WER and CER, download my audio speech recognition checkpoint, named `asr-checkpoint.pth`, from the same link.
 
 ## Train 
 
@@ -46,7 +46,6 @@ python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
 └── targets
     ├── ID-target.wav
     └── ... 
-
 ```
 Run
 ```shell
