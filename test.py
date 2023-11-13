@@ -6,11 +6,13 @@ from tqdm import tqdm
 import torch
 import torch.nn.functional as F
 
+import src.datasets
 import src.model as ss_module_model
 import hw_asr.model as asr_module_model
 import src.metric as module_metric
 from src.trainer import Trainer
 from src.utils import MetricTracker
+from src.collate_fn.ss_collate import ss_collate_fn
 from src.utils.object_loading import get_dataloaders
 from src.utils.parse_config import ConfigParser
 
@@ -22,7 +24,7 @@ def main(config, args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # setup data_loader instances
-    dataloader = get_dataloaders(config)["test"]
+    dataset = config.init_obj(config["data"]["test"]["datasets"][0], src.datasets, config_parser=config)
 
     def load_model(arch, checkpoint):
         # build model architecture
@@ -65,7 +67,8 @@ def main(config, args):
     metrics_tracker = MetricTracker(*[m.name for m in metrics])
 
     with torch.no_grad():
-        for _, batch in enumerate(tqdm(dataloader)):
+        for i, batch in enumerate(tqdm(dataset)):
+            batch["x_wav_len"] = torch.Tensor(batch["x_wav"].shape[1])
             batch = Trainer.move_batch_to_device(batch, device)
 
             # basic metrics
@@ -83,7 +86,7 @@ def main(config, args):
             if args.asr_checkpoint is not None:
 
                 def insert_logits(pref, wav):
-                    _, spectrogram = dataloader.dataset.process_wave(wav.cpu())
+                    _, spectrogram = dataset.process_wave(wav.cpu())
                     batch["spectrogram"] = spectrogram.to(device)
                     batch["spectrogram_length"] = torch.Tensor([spectrogram.shape[1]]).to(device)
                     batch[pref + "log_probs"] = F.log_softmax(asr_model(**batch)["logits"], dim=-1)
@@ -94,8 +97,6 @@ def main(config, args):
 
             # Segmented
             if segmentation:
-                assert dataloader.batch_size == 1, "Yoy can use only `batch_size=1`!"
-
                 window_len = int(args.second * config["preprocessing"]["sr"])
                 segmented_wavs = []
                 cut_len = (wav.shape[1] // window_len) * window_len
@@ -182,7 +183,7 @@ if __name__ == "__main__":
                             "mix_dir": str(test_data_folder) + "/mix",
                             "ref_dir": str(test_data_folder) + "/refs",
                             "target_dir": str(test_data_folder) + "/targets",
-                            "limit": 500,
+                            "limit": 1,
                         },
                     }
                 ],
