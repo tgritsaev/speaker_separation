@@ -23,7 +23,7 @@ def ss_collate_fn(dataset_items: List[dict]):
         target_wav.append(pad_to_len(item["target_wav"], max_y_target_wav_length))
         x_wav_len.append(item["x_wav"].shape[1])
         speaker_id.append(item["speaker_id"])
-        text.append(item["text"])
+        text.append(item["text"] if "text" in item.keys() else "")
 
     return {
         "y_wav": torch.cat(y_wav),
