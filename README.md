@@ -53,11 +53,11 @@ python test.py --test_data_folder path_to_data_folder
 ```
 This approach does not support texts.
 
-5. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
+5. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json` and run 
 ```shell
 python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
 ```
-6. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
+6. If you want to test quality on segmented audio (segmented by 100ms windows on default), use `test_model/segmentation_config.json` run 
 ```shell
 python test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 ```
