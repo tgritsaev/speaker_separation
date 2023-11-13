@@ -44,17 +44,47 @@ python test.py -c path_to_config --ss_checkpoint path_to_ss_checkpoint
 ├── targets
     ├── ID-target.wav
     ├── ... 
+
 python test.py --test_data_folder path_to_data_folder
 ```
-1. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
+If you have texts, just place them in the directory
+```shell
+.
+├── mix
+│   ├── ID-mixed.wav
+│   └── ...
+├── refs
+│   ├── ID-ref.wav
+│   ├── ...
+├── targets
+│    ├── ID-target.wav
+│    ├── ... 
+├── ID-text.txt
+```
+or
+```shell
+.
+├── mix
+│   ├── ID-mixed.wav
+│   └── ...
+├── refs
+│   ├── ID-ref.wav
+│   ├── ...
+├── targets
+│   ├── ID-target.wav
+│   ├── ... 
+├── texts 
+    ├── ID-text.txt
+    ├── ... 
+```
+5. If you want to measure speech recognition model quality on my speech separation solution, use `test_model/asr_config.json`` and run 
 ```shell
 python test.py -c test_model/config_for_asr.json --ss_checkpoint path_to_ss_checkpoint --asr_checkpoint path_to_asr_checkpoint`.
 ```
-1. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
+6. If you want to test quality on segmented audio (segmented by 100ms windows on default), use test_model/segmentation_config.json run 
 ```shell
-python3 test.py -c test_model/segmentation_config.json -s window_len_in_seconds
+python test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 ```
-
 
 ## Credits
 
