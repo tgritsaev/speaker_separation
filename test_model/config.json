@@ -44,6 +44,7 @@
     "data": {
         "test": {
             "batch_size": 1,
+            "shuffle": false,
             "num_workers": 1,
             "datasets": [
                 {

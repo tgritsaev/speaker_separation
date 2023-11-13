@@ -173,6 +173,7 @@ if __name__ == "__main__":
         config.config["data"] = {
             "test": {
                 "batch_size": 1,
+                "shuffle": False,
                 "num_workers": args.jobs,
                 "datasets": [
                     {
