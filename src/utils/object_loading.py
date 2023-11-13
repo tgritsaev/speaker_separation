@@ -40,7 +40,7 @@ def get_dataloaders(configs: ConfigParser):
         if "batch_size" in params:
             bs = params["batch_size"]
             shuffle = True
-            if shuffle in params["shuffle"]:
+            if shuffle in params.keys():
                 shuffle = params["shuffle"]
             batch_sampler = None
         elif "batch_sampler" in params:
