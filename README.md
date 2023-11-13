@@ -1,5 +1,7 @@
 # Speech Separation
 
+Code for the speech separation task is implemented in `src/`, the directory `hw_asr` is required for measuring speech recognition quality.
+
 ## Installation guide
 
 1. Install libraries
@@ -64,7 +66,7 @@ python test.py -c test_model/segmentation_config.json -s window_len_in_seconds
 
 ## Wandb Report
 
-https://api.wandb.ai/links/tgritsaev/rkir8sp9
+https://api.wandb.ai/links/tgritsaev/rkir8sp9 (Russian only)
 
 ## Credits
 
