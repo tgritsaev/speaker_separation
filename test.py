@@ -68,9 +68,7 @@ def main(config, args):
 
     with torch.no_grad():
         for i, pre_batch in enumerate(tqdm(dataset)):
-            for key in pre_batch.keys():
-                pre_batch[key] = [pre_batch[key]]
-            batch = ss_collate_fn(pre_batch)
+            batch = ss_collate_fn([pre_batch])
             batch = Trainer.move_batch_to_device(batch, device)
 
             # basic metrics
