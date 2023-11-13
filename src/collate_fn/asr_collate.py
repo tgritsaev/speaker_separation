@@ -26,7 +26,7 @@ def collate_fn(dataset_items: List[dict]):
         cur_text_length_dim = item["text_encoded"].shape[1]
         text_encoded[i] = torch.cat([item["text_encoded"][0], torch.zeros(text_length_dim - cur_text_length_dim)])
         text_encoded_length.append(cur_text_length_dim)
-        text.append(item["text"])
+        text.append(item["text"] if "text" in item.keys() else "")
 
         audio_path.append(item["audio_path"])
         audio.append(item["audio"])

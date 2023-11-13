@@ -25,7 +25,7 @@
             "mixture_generator_init": {
                 "test": false,
                 "out_folder": "data/mixture/train",
-                "nfiles": 30000
+                "nfiles": 10000
             },
             "mixture_generator_generate_mixes": {
                 "snr_levels": [-5, 5],
