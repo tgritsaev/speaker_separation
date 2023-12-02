@@ -1,4 +1,4 @@
-# Speech Separation
+# Speech separation with SpEx+
 
 Code for the speech separation task is implemented in `src/`, the directory `hw_asr/` is required for measuring speech recognition quality.
 
